@@ -4,7 +4,7 @@
    Everything the board needs is kept on the phone, so it keeps working with no
    internet. Voice clips go in their own cache ("tt2-voices") that survives app
    updates; the page fills it for whichever voice is selected. */
-var VERSION = '4362d3ebde6d';
+var VERSION = '2ea192f6ef46';
 var CACHE = 'tt2-app-' + VERSION;
 var VOICE_CACHE = 'tt2-voices';
 var PRECACHE = [
@@ -216,7 +216,24 @@ var PRECACHE = [
  "pictures/pee-hurts.webp",
  "pictures/privates.webp",
  "pictures/shoulder.webp",
- "pictures/throat.webp"
+ "pictures/throat.webp",
+ "manual/",
+ "manual/img/main.webp",
+ "manual/img/portrait.webp",
+ "manual/img/picker.webp",
+ "manual/img/page-ouch.webp",
+ "manual/img/page-questions.webp",
+ "manual/img/momdad.webp",
+ "manual/img/page-talk.webp",
+ "manual/img/show-big.webp",
+ "manual/img/page-tongan.webp",
+ "manual/img/editor.webp",
+ "manual/img/abc.webp",
+ "manual/img/page-body.webp",
+ "manual/img/settings-top.webp",
+ "manual/img/settings-mid.webp",
+ "manual/img/settings-bottom.webp",
+ "manual/img/paper.webp"
 ];
 
 self.addEventListener('install', function (e) {
