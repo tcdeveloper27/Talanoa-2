@@ -76,7 +76,7 @@ function serve() {
   await page.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 30000 });
   for (const end = Date.now() + 120000; ;) {
     const done = await page.evaluate(async () => {
-      const want = voiceUrls(), have = new Set((await (await caches.open('tt-voices')).keys()).map((r) => r.url));
+      const want = voiceUrls(), have = new Set((await (await caches.open('tt2-voices')).keys()).map((r) => r.url));
       return want.every((u) => have.has(u));
     });
     if (done) break;
@@ -137,7 +137,7 @@ function serve() {
   //    pictures" has something to show.
   await page.evaluate(() => {
     const d = (n) => dayStr(new Date(Date.now() - n * 864e5));
-    localStorage.setItem('tt_counts', JSON.stringify({ since: d(6), days: {
+    localStorage.setItem('tt2_counts', JSON.stringify({ since: d(6), days: {
       [d(0)]: { 'I want|Drink': 4, 'I feel|Happy': 3, 'core|Yes': 3, 'Maverik|Drink': 2 },
       [d(2)]: { 'I want|Drink': 3, 'I feel|Happy': 2, 'Fun|Toy Story': 3 },
       [d(5)]: { 'Maverik|Drink': 3, 'core|Yes': 2, "core|Hi, I'm Brenton": 3 } } }));

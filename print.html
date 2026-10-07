@@ -142,7 +142,7 @@ function coreRow(){
 function foot(text){
   var f = el('div', 'foot');
   f.appendChild(el('span', '', text || 'Point to a picture. Staff: say the words out loud, and point to pictures yourself while you talk.'));
-  f.appendChild(el('span', '', 'tcdeveloper27.github.io/Talanoa'));
+  f.appendChild(el('span', '', 'tcdeveloper27.github.io/Talanoa-2'));
   return f;
 }
 function pageSheet(p, n, total){
@@ -229,7 +229,7 @@ function build(){
 function loadOwn(){
   return new Promise(function(ok){
     try {
-      var r = indexedDB.open('talanoa', 1), done = setTimeout(ok, 1500);
+      var r = indexedDB.open('talanoa2', 1), done = setTimeout(ok, 1500);
       r.onupgradeneeded = function(){ r.result.createObjectStore('mine', {keyPath: 'key'}); };
       r.onsuccess = function(){
         var q = r.result.transaction('mine', 'readonly').objectStore('mine').getAll();

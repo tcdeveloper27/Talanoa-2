@@ -10,7 +10,7 @@ import math, html, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
-APP_URL = 'https://tcdeveloper27.github.io/Talanoa/'
+APP_URL = 'https://tcdeveloper27.github.io/Talanoa-2/'
 
 
 def pct(v, total):

@@ -6,14 +6,14 @@
 <script>
 /* Fitting above Android's navigation bar: see "ANDROID'S NAVIGATION BAR" below.
    If this phone was found to need it, ask for it before anything is drawn. */
-try { if (localStorage.getItem('tt_fit') === 'cover') document.querySelector('meta[name=viewport]').content += ', viewport-fit=cover'; } catch(e){}
+try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('meta[name=viewport]').content += ', viewport-fit=cover'; } catch(e){}
 </script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#6B4423">
-<title>Talanoa</title>
-<meta name="application-name" content="Talanoa">
-<meta name="apple-mobile-web-app-title" content="Talanoa">
+<title>Talanoa 2</title>
+<meta name="application-name" content="Talanoa 2">
+<meta name="apple-mobile-web-app-title" content="Talanoa 2">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -566,16 +566,16 @@ function showMineStat(){
 }
 
 /* ---------------- settings state ---------------- */
-var voiceId = store('tt_voice') || (ASSETS.voices[0] ? ASSETS.voices[0].id : 'device');
+var voiceId = store('tt2_voice') || (ASSETS.voices[0] ? ASSETS.voices[0].id : 'device');
 if (voiceId !== 'device' && !ASSETS.clips[voiceId]) voiceId = ASSETS.voices[0] ? ASSETS.voices[0].id : 'device';
-var speed = parseFloat(store('tt_speed') || '1');
-var vol = parseFloat(store('tt_vol') || '1');
-var swipeOn = store('tt_swipe') !== '0';
+var speed = parseFloat(store('tt2_speed') || '1');
+var vol = parseFloat(store('tt2_vol') || '1');
+var swipeOn = store('tt2_swipe') !== '0';
 var hidden = [];
-try { hidden = JSON.parse(store('tt_hidden') || '[]'); } catch(e){}
+try { hidden = JSON.parse(store('tt2_hidden') || '[]'); } catch(e){}
 
 /* ---------------- built-in (device) voice ---------------- */
-var synth = window.speechSynthesis, deviceVoices = [], deviceChoice = store('tt_device_voice') || 'auto';
+var synth = window.speechSynthesis, deviceVoices = [], deviceChoice = store('tt2_device_voice') || 'auto';
 
 /* Best-sounding voice first: natural/neural/online voices beat the old robotic ones. */
 function voiceScore(v){
@@ -1013,8 +1013,8 @@ function visiblePages(){
 var pages = visiblePages(), current = 0;
 /* After an automatic update the app reloads; come back to the same page. */
 try {
-  var resume = sessionStorage.getItem('tt_resume_page');
-  sessionStorage.removeItem('tt_resume_page');
+  var resume = sessionStorage.getItem('tt2_resume_page');
+  sessionStorage.removeItem('tt2_resume_page');
   pages.forEach(function(p, i){ if (p.name === resume) current = i; });
 } catch(e){}
 var stage = document.getElementById('stage'), gridEl = null;
@@ -1255,7 +1255,7 @@ fitLabels(coreEl);
 preloadCore();                             /* the top row's clips, ready for the first tap */
 loadAbcList();                             /* the ABC page's long word list for this voice */
 window.addEventListener('resize', function(){ fitLabels(coreEl); if (gridEl) fitLabels(gridEl); });
-var STRONG = store('tt_strong') === '1', BIG = store('tt_big') !== '0', ROOM = store('tt_room') === '1';
+var STRONG = store('tt2_strong') === '1', BIG = store('tt2_big') !== '0', ROOM = store('tt2_room') === '1';
 document.body.classList.toggle('strong', STRONG);
 document.body.classList.toggle('room', ROOM);
 
@@ -1282,17 +1282,17 @@ function openSettings(){
 var calmBox = document.getElementById('calmOn'), bigBox = document.getElementById('bigOn');
 var strongBox = document.getElementById('strongOn'), countBox = document.getElementById('countOn'), roomBox = document.getElementById('roomOn');
 roomBox.addEventListener('change', function(){
-  ROOM = roomBox.checked; store('tt_room', ROOM ? '1' : '0');
+  ROOM = roomBox.checked; store('tt2_room', ROOM ? '1' : '0');
   document.body.classList.toggle('room', ROOM);
   fitLabels(coreEl); if (gridEl) fitLabels(gridEl); showScreen();
 });
-calmBox.addEventListener('change', function(){ CALM = calmBox.checked; store('tt_calm', CALM ? '1' : '0'); });
-bigBox.addEventListener('change', function(){ BIG = bigBox.checked; store('tt_big', BIG ? '1' : '0'); });
+calmBox.addEventListener('change', function(){ CALM = calmBox.checked; store('tt2_calm', CALM ? '1' : '0'); });
+bigBox.addEventListener('change', function(){ BIG = bigBox.checked; store('tt2_big', BIG ? '1' : '0'); });
 strongBox.addEventListener('change', function(){
-  STRONG = strongBox.checked; store('tt_strong', STRONG ? '1' : '0');
+  STRONG = strongBox.checked; store('tt2_strong', STRONG ? '1' : '0');
   document.body.classList.toggle('strong', STRONG);
 });
-countBox.addEventListener('change', function(){ countOn = countBox.checked; store('tt_count', countOn ? '1' : '0'); buildCounts(); });
+countBox.addEventListener('change', function(){ countOn = countBox.checked; store('tt2_count', countOn ? '1' : '0'); buildCounts(); });
 
 function buildVoiceList(){
   var box = document.getElementById('voiceList'); box.innerHTML = '';
@@ -1305,7 +1305,7 @@ function buildVoiceList(){
     t.firstChild.textContent = o.name; t.lastChild.textContent = o.desc;
     lab.appendChild(r); lab.appendChild(t);
     r.addEventListener('change', function(){
-      voiceId = o.id; store('tt_voice', voiceId);
+      voiceId = o.id; store('tt2_voice', voiceId);
       preloadCore();
       sample();
       loadAbcList();
@@ -1321,28 +1321,28 @@ function sample(){
 }
 
 document.getElementById('deviceVoice').addEventListener('change', function(e){
-  deviceChoice = e.target.value; store('tt_device_voice', deviceChoice);
+  deviceChoice = e.target.value; store('tt2_device_voice', deviceChoice);
   stopTalking(); speakDevice('Hi! This is my voice.');
 });
 
 var sEl = document.getElementById('speed'), sV = document.getElementById('speedVal');
 sEl.value = speed; sV.textContent = speed.toFixed(2);
-sEl.addEventListener('input', function(e){ speed = parseFloat(e.target.value); sV.textContent = speed.toFixed(2); store('tt_speed', speed); });
+sEl.addEventListener('input', function(e){ speed = parseFloat(e.target.value); sV.textContent = speed.toFixed(2); store('tt2_speed', speed); });
 sEl.addEventListener('change', function(){ show('This is how fast I talk'); say('_speed', 'This is how fast I talk'); });
 
 var vEl = document.getElementById('vol'), vV = document.getElementById('volVal');
 vEl.value = vol; vV.textContent = vol.toFixed(1);
-vEl.addEventListener('input', function(e){ vol = parseFloat(e.target.value); vV.textContent = vol.toFixed(1); store('tt_vol', vol); });
+vEl.addEventListener('input', function(e){ vol = parseFloat(e.target.value); vV.textContent = vol.toFixed(1); store('tt2_vol', vol); });
 
 var swipeBox = document.getElementById('swipeOn');
 swipeBox.checked = swipeOn;
-swipeBox.addEventListener('change', function(){ swipeOn = swipeBox.checked; store('tt_swipe', swipeOn ? '1' : '0'); });
+swipeBox.addEventListener('change', function(){ swipeOn = swipeBox.checked; store('tt2_swipe', swipeOn ? '1' : '0'); });
 
 var fxRadios = document.querySelectorAll('#fxList input');
 function showFxLevel(){ for (var i = 0; i < fxRadios.length; i++) fxRadios[i].checked = fxRadios[i].value === FX_LEVEL; }
 for (var fi = 0; fi < fxRadios.length; fi++){
   fxRadios[fi].addEventListener('change', function(e){
-    setFxLevel(e.target.value); store('tt_fx', FX_LEVEL);
+    setFxLevel(e.target.value); store('tt2_fx', FX_LEVEL);
     var lab = e.target.closest('label');                /* a taste of it, right on the button */
     if (FX_LEVEL !== 'off'){ bounce(lab); rings(lab, '#3C6E9F'); }
     if (FX_LEVEL === 'lots') burst(lab, 'confetti', '#3C6E9F', 1);
@@ -1365,7 +1365,7 @@ function buildPageList(){
         hidden = hidden.filter(function(k){ return k !== p.key; });   /* keep at least one page */
         c.checked = true;
       }
-      store('tt_hidden', JSON.stringify(hidden));
+      store('tt2_hidden', JSON.stringify(hidden));
       var here = pages[current] && pages[current].key;
       pages = visiblePages();
       var idx = -1;
@@ -1423,7 +1423,7 @@ window.addEventListener('resize', function(){ if (showView.classList.contains('o
    Settings shows the most-used pictures and the ones not used
    lately, to see which words matter and which are missing.
    ============================================================ */
-var COUNTS = 'tt_counts', KEEP_DAYS = 90, countOn = store('tt_count') !== '0', lastCount = {key: '', t: 0};
+var COUNTS = 'tt2_counts', KEEP_DAYS = 90, countOn = store('tt2_count') !== '0', lastCount = {key: '', t: 0};
 function dayStr(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 function readCounts(){
   try { var c = JSON.parse(store(COUNTS) || 'null'); if (c && c.days) return c; } catch(e){}
@@ -1498,7 +1498,7 @@ function ownReq(r){ return new Promise(function(ok, no){ r.onsuccess = function(
 function openOwn(){
   if (!ownReady) ownReady = new Promise(function(ok, no){
     if (!window.indexedDB) { no(new Error('no storage')); return; }
-    var r = indexedDB.open('talanoa', 1);
+    var r = indexedDB.open('talanoa2', 1);
     r.onupgradeneeded = function(){ r.result.createObjectStore('mine', {keyPath: 'key'}); };
     r.onsuccess = function(){ ownDb = r.result; ok(ownDb); };
     r.onerror = function(){ no(r.error); };
@@ -1784,7 +1784,7 @@ document.getElementById('ownFile').addEventListener('change', function(e){
 });
 
 /* ---------------- offline ---------------- */
-var VOICE_CACHE = 'tt-voices';
+var VOICE_CACHE = 'tt2-voices';
 function voiceUrls(){
   if (voiceId === 'device' || !ASSETS.clips[voiceId]) return [];
   var abc = ASSETS.abc || {}, seen = {}, out = [];
@@ -1861,12 +1861,12 @@ document.addEventListener('pointerdown', function(){ lastTap = Date.now(); }, tr
 function checkForUpdate(){
   if (!swReg) return Promise.resolve(false);
   return swReg.update().then(function(){
-    store('tt_checked', String(Date.now()));
+    store('tt2_checked', String(Date.now()));
     return !!(swReg.installing || swReg.waiting);
   });
 }
 function applyUpdate(){
-  try { sessionStorage.setItem('tt_resume_page', pages[current] ? pages[current].name : ''); } catch(e){}
+  try { sessionStorage.setItem('tt2_resume_page', pages[current] ? pages[current].name : ''); } catch(e){}
   location.reload();
 }
 function maybeApply(){
@@ -1880,7 +1880,7 @@ function showVersion(text){
   var el = document.getElementById('updateStat');
   if (text){ el.textContent = text; return; }
   if (!navigator.serviceWorker || !navigator.serviceWorker.controller){ el.textContent = 'Version: still setting up'; return; }
-  var checked = parseInt(store('tt_checked') || '0', 10);
+  var checked = parseInt(store('tt2_checked') || '0', 10);
   var when = checked ? new Date(checked).toLocaleString([], {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'}) : 'not yet';
   var ch = new MessageChannel();
   ch.port1.onmessage = function(e){
@@ -1969,13 +1969,13 @@ function coverOn(){ return /viewport-fit=cover/.test(viewportMeta.content); }
 function bottomInset(){ return parseFloat(getComputedStyle(document.getElementById('insetProbe')).paddingBottom) || 0; }
 function afterFrames(n, fn){ requestAnimationFrame(function(){ if (n > 1) afterFrames(n - 1, fn); else fn(); }); }
 function fitDone(mode){
-  try { localStorage.setItem('tt_fit', mode); localStorage.setItem('tt_fit_size', innerWidth + 'x' + innerHeight); } catch(e){}
+  try { localStorage.setItem('tt2_fit', mode); localStorage.setItem('tt2_fit_size', innerWidth + 'x' + innerHeight); } catch(e){}
   fitLabels(coreEl); if (gridEl) fitLabels(gridEl);
 }
 function fitNavBar(){
   var installed = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches;
   if (!installed || !/Android/i.test(navigator.userAgent)) return;
-  var mode = store('tt_fit'), size = store('tt_fit_size');
+  var mode = store('tt2_fit'), size = store('tt2_fit_size');
   if (mode === 'none' && size === innerWidth + 'x' + innerHeight) return;      /* checked before: nothing to do */
   if (mode === 'cover' && coverOn()){                                         /* set before drawing: is it still right? */
     setTimeout(function(){ if (bottomInset() > 0) fitDone('cover'); else { setCover(false); fitDone('none'); } }, 400);
@@ -2018,7 +2018,7 @@ try {
    on screen, so it costs no battery in between.
    Settings: Lots / A little (bounces and rings only) / Off.
    ============================================================ */
-var FX_LEVEL = store('tt_fx') || (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'little' : 'lots');
+var FX_LEVEL = store('tt2_fx') || (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'little' : 'lots');
 if (['lots', 'little', 'off'].indexOf(FX_LEVEL) === -1) FX_LEVEL = 'lots';
 function setFxLevel(v){
   FX_LEVEL = v;
@@ -2138,7 +2138,7 @@ function colorOf(el){
 }
 /* "Calm answers" (Settings, off unless chosen): every answer word (Yes, No,
    feelings, the Talk page) gets the same gentle sparkles. */
-var CALM = store('tt_calm') === '1';
+var CALM = store('tt2_calm') === '1';
 function fxKind(el, item){
   var g = el && el.closest ? el.closest('.grid') : null;
   if (CALM && (item.answer || (g && g._answer))) return 'soft';

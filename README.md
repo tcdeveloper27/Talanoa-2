@@ -1,16 +1,21 @@
-# Talanoa
+# Talanoa 2
+
+> **Being prepared (2026-10-07):** a copy of [Talanoa](https://github.com/tcdeveloper27/Talanoa) for a second resident.
+> It still holds Brenton's board until the new board's words arrive. The website isn't switched on yet.
+> It saves everything under its own names (`tt2_…`, `tt2-voices`, `tt2-app-…`, the `talanoa2` database), so both
+> boards can be installed on the same phone without mixing settings or deleting each other's offline copy.
 
 *Talanoa* (tah-lah-NOH-ah) is Tongan for talking together.
 
 Made for the residents of Faleofaz.
 
-A tap-to-speak picture board (AAC). Tap a tile and it says the phrase out loud in a natural voice. Brenton uses it on his Android phone.
+A tap-to-speak picture board (AAC). Tap a tile and it says the phrase out loud in a natural voice. (Brenton uses the original, Talanoa, on his Android phone.)
 
-**Open it:** https://tcdeveloper27.github.io/Talanoa/
+**Open it:** https://tcdeveloper27.github.io/Talanoa-2/
 
 On an Android phone (or tablet), open the link in Chrome, then **⋮ → Add to Home screen** (or **Install app**). It opens full screen like an app, stays upright, and keeps working with no internet.
 
-**Staff guide:** https://tcdeveloper27.github.io/Talanoa/manual/ (printable PDF: [manual/Talanoa-Staff-Guide.pdf](manual/Talanoa-Staff-Guide.pdf)). Also in the app: hold ⚙ → **Staff guide**.
+**Staff guide:** https://tcdeveloper27.github.io/Talanoa-2/manual/ (printable PDF: [manual/Talanoa-Staff-Guide.pdf](manual/Talanoa-Staff-Guide.pdf)). Also in the app: hold ⚙ → **Staff guide**.
 
 ## Using it
 
