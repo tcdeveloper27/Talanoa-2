@@ -2160,8 +2160,8 @@ document.getElementById('ownSave').addEventListener('click', function(){
       return Promise.all([r.photo ? toData(r.photo) : null, r.voice ? toData(r.voice) : null])
         .then(function(d){ return {key: r.key, photo: d[0], voice: d[1]}; });
     })).then(function(items){
-      var name = 'talanoa-photos-and-voices-' + dayStr(new Date()) + '.json';
-      var file = new Blob([JSON.stringify({app: 'talanoa', kind: 'photos-and-voices', version: 1, saved: new Date().toISOString(), items: items})], {type: 'application/json'});
+      var name = 'talanoa2-photos-and-voices-' + dayStr(new Date()) + '.json';   /* its own name and label, so Talanoa's backups can't be mixed in */
+      var file = new Blob([JSON.stringify({app: 'talanoa2', kind: 'photos-and-voices', version: 1, saved: new Date().toISOString(), items: items})], {type: 'application/json'});
       var a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function(){ URL.revokeObjectURL(a.href); }, 60000);
@@ -2180,8 +2180,9 @@ document.getElementById('ownFile').addEventListener('change', function(e){
     var data;
     try { data = JSON.parse(t); }
     catch(err){ throw new Error(/^\s*\{/.test(t) ? 'That backup file is damaged or only partly copied (it stops partway). Copy it onto the phone again.'
-                                                 : 'That file isn’t a Talanoa backup. Choose the file named “talanoa-photos-and-voices-…”.'); }
-    if (!data || data.app !== 'talanoa' || !Array.isArray(data.items)) throw new Error('That file isn’t a Talanoa backup. Choose the file named “talanoa-photos-and-voices-…”.');
+                                                 : 'That file isn’t a Talanoa 2 backup. Choose the file named “talanoa2-photos-and-voices-…”.'); }
+    if (data && data.app === 'talanoa') throw new Error('That backup is from Talanoa (another board), not Talanoa 2, so nothing was put back. Choose the file named “talanoa2-photos-and-voices-…”.');
+    if (!data || data.app !== 'talanoa2' || !Array.isArray(data.items)) throw new Error('That file isn’t a Talanoa 2 backup. Choose the file named “talanoa2-photos-and-voices-…”.');
     return openOwn().catch(fail('This phone won’t let Talanoa keep photos and voices (private browsing, or site storage turned off in Chrome).')).then(function(){
       return Promise.all(data.items.map(function(it){
         return Promise.all([it.photo ? fromData(it.photo) : null, it.voice ? fromData(it.voice) : null])
