@@ -107,7 +107,7 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   #title .pic{height:66%;max-height:58px;aspect-ratio:1;flex:none;}
   #title .pic img{height:100%;width:100%;object-fit:contain;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));}
   #title .txt{display:flex;flex-direction:column;align-items:flex-start;min-width:0;}
-  #title .name{font-size:clamp(18px,min(3.2vw,4.4vh),34px);font-weight:900;line-height:1.05;white-space:nowrap;}
+  #title .name{font-size:clamp(18px,min(3.2vw,4.4vh),34px);font-weight:900;line-height:1.05;white-space:nowrap;max-width:100%;overflow:hidden;}
   #dots{display:flex;gap:clamp(3px,1.1vw,6px);margin-top:min(5px,.6vh);flex-wrap:wrap;}
   #dots i{width:clamp(6px,2.2vw,9px);height:clamp(6px,2.2vw,9px);border-radius:50%;background:rgba(255,255,255,.4);}
   #dots i.on{background:#fff;transform:scale(1.35);}
@@ -344,11 +344,155 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   #edPic{display:flex;justify-content:center;margin:4px 0 6px;}
   #edPic .tile{width:150px;height:170px;font-size:17px;}
   #edNote{min-height:1.2em;margin:4px 0 10px;font-weight:700;color:#3C6E9F;}
+
+  /* ---------- Settings: staff tools along the top ---------- */
+  .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:10px 0 4px;}
+  .tool{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border:2px solid #3C6E9F;border-radius:14px;
+        background:#fff;color:#3C6E9F;font-size:14px;font-weight:800;line-height:1.15;cursor:pointer;text-align:center;}
+  .tool span{font-size:26px;line-height:1;}
+  .tool.on{background:#3C6E9F;color:#fff;}
+  .warn.old{background:#FFF4D6;}
+
+  /* ---------- Getting attention: a soft yellow flash over everything ---------- */
+  #flashLayer{position:fixed;inset:0;z-index:55;pointer-events:none;background:#FFE14D;opacity:0;}
+  #flashLayer.go{animation:attn .9s ease-out;}
+  @keyframes attn{0%{opacity:0}12%{opacity:.7}40%{opacity:.08}55%{opacity:.55}100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){#flashLayer.go{animation:attn1 .9s ease-out;}}
+  @keyframes attn1{0%{opacity:0}20%{opacity:.5}100%{opacity:0}}
+
+  /* ---------- A short message near the bottom (staff tools, stickers) ---------- */
+  #toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:70;max-width:92vw;
+         background:#2B1D0E;color:#fff;border-radius:14px;padding:12px 16px;font-size:16px;font-weight:700;text-align:center;
+         box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;}
+  #toast.on{opacity:1;}
+
+  /* ---------- Stay on this page: the arrows go ---------- */
+  .arrow.gone{visibility:hidden;}
+  #title .lock{font-size:.8em;margin-right:4px;}
+
+  /* ---------- Scanning a QR sticker ---------- */
+  #scanView{position:fixed;inset:0;z-index:65;background:#000;display:none;flex-direction:column;}
+  #scanView.open{display:flex;}
+  #scanVideo{flex:1;min-height:0;width:100%;object-fit:cover;}
+  #scanMsg{flex:none;color:#fff;font-size:18px;font-weight:800;text-align:center;padding:12px;}
+  #scanClose{flex:none;margin:0 12px calc(12px + env(safe-area-inset-bottom));padding:16px;border:none;border-radius:16px;background:#444;color:#fff;font-size:20px;font-weight:900;}
+  .pick.scan{background:#3C6E9F;box-shadow:0 5px 0 #29496A;justify-content:center;}
+
+  /* ---------- Made on this phone: the editor's extra fields, the picture chooser, a shared photo ---------- */
+  .row input.find,.row select{margin:0;}
+  #edMine .row small{font-weight:400;color:#777;}
+  .walk{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:8px;}
+  .walk button.plain{margin:0;padding:10px;}
+  .walk b{font-size:15px;color:#555;}
+  .igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;max-height:52vh;overflow:auto;margin-bottom:6px;}
+  .igrid button{border:2px solid #E5DCC8;background:#fff;border-radius:12px;padding:6px;aspect-ratio:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .igrid img{width:100%;height:100%;object-fit:contain;}
+  #sharedPic{display:flex;justify-content:center;margin:6px 0 14px;}
+  #sharedPic img{max-width:70%;max-height:30vh;border-radius:12px;}
+  .cgrid .tile.mine-new{border-style:dashed;}
+
+  /* ---------- The Time page's answers: a card over the board ---------- */
+  #infoView{position:fixed;inset:0;z-index:58;background:#fff;display:none;flex-direction:column;border:10px solid #00838F;
+            padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+  #infoView.open{display:flex;}
+  #infoBody{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;padding:14px;text-align:center;overflow:hidden;}
+  #infoBtns{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;}
+  #infoBtns button{border:none;border-radius:16px;padding:16px 8px;font-size:22px;font-weight:900;cursor:pointer;color:#fff;}
+  #infoSay{background:#3C6E9F;box-shadow:0 4px 0 #29496A;} #infoClose{background:#444;box-shadow:0 4px 0 #222;}
+  .ib1{font-size:min(20vw,11vh);font-weight:900;line-height:1;color:#111;white-space:nowrap;max-width:100%;}
+  .ib2{font-size:min(8.5vw,5vh);font-weight:800;color:#333;line-height:1.15;}
+  .ib3{font-size:min(5.5vw,3.2vh);font-weight:700;color:#555;}
+  .clockface{width:min(62vw,34vh);height:min(62vw,34vh);flex:none;}
+  .weekrow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:min(94vw,560px);}
+  .weekrow div{border:2px solid #CFD8DC;border-radius:10px;padding:6px 0;font-size:min(4vw,2.4vh);font-weight:800;color:#555;}
+  .weekrow div.today{background:#00838F;border-color:#00838F;color:#fff;}
+  .weekrow div.visit{border-color:#E64A19;border-width:4px;}
+  .sleeps{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:92vw;}
+  .sleeps span{font-size:min(10vw,6vh);line-height:1;}
+  .pie{width:min(62vw,30vh);height:min(62vw,30vh);flex:none;}
+  .ctile .tile{width:min(40vw,19vh);height:min(44vw,21vh);font-size:min(5vw,2.8vh);}
+  .ftile{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .ftile.done .tile{opacity:.35;}
+  .ftile.done b::after{content:" ✓";color:#3F8A34;}
+  .ftile b{font-size:min(7vw,4.2vh);font-weight:900;}
+  .ftrow{display:flex;align-items:center;justify-content:center;gap:min(4vw,2vh);}
+  .ftrow .arrowto{font-size:min(10vw,6vh);font-weight:900;color:#00838F;}
+  @media (orientation:portrait){.ftrow{flex-direction:column;gap:1vh;} .ftrow .arrowto{transform:rotate(90deg);}}
+  #infoExtra{flex:none;display:flex;justify-content:center;}
+  #infoExtra button{margin:0 10px 4px;}
+  .bigbtn{border:none;border-radius:14px;padding:12px 18px;font-size:min(5vw,3vh);font-weight:900;background:#3F8A34;color:#fff;cursor:pointer;}
+  /* ---------- Scene pages: a photo with spots to tap ---------- */
+  .grid.scene{display:block;padding:0;background:#222;}
+  .grid.scene .sceneimg{position:absolute;pointer-events:none;}
+  .tile.spot{position:absolute;padding:0;border:4px solid #fff;border-radius:50%;background:rgba(255,255,255,.16);
+             box-shadow:0 0 0 3px rgba(0,0,0,.55);min-width:0;min-height:0;}
+  .tile.spot.lit::after{border-radius:50%;}
+  .tile.spot:active,.tile.spot.press{transform:scale(.94);box-shadow:0 0 0 3px rgba(0,0,0,.55);}
+  .spotlab{position:absolute;left:50%;top:100%;transform:translate(-50%,4px);white-space:nowrap;background:rgba(0,0,0,.72);color:#fff;
+           border-radius:10px;padding:2px 8px;font-size:clamp(13px,3.4vw,20px);font-weight:800;pointer-events:none;}
+  #seBox{position:relative;margin:0 0 10px;user-select:none;}
+  #seBox img{width:100%;display:block;border-radius:10px;}
+  #seBox .espot{position:absolute;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 3px #0057FF;background:rgba(0,87,255,.15);transform:translate(-50%,-50%);}
+  #seBox .espot span{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;background:#0057FF;color:#fff;font-size:12px;font-weight:700;border-radius:8px;padding:1px 6px;}
+  #seBox .empty-photo{padding:40px 10px;text-align:center;border:2px dashed #ccc;border-radius:10px;color:#777;}
+  /* ---------- Story pages: one step at a time ---------- */
+  .grid.story{grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr auto;}
+  .grid.story .storypic{grid-column:1/-1;font-size:clamp(20px,min(5.4vw,3.6vh),40px);}
+  .grid.story .storypic .lab{white-space:normal;line-height:1.15;}
+  .grid.story .storypic .pic img.photo{max-height:100%;}
+  .grid.story .storybtn{min-height:clamp(56px,9vh,90px);font-size:clamp(18px,4.4vw,30px);}
+  .grid.story .storybtn.off{opacity:.35;}
+  .grid.story .storyn{display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4vw,24px);font-weight:800;color:#555;}
+  .strow{display:grid;grid-template-columns:56px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #EFE6D3;}
+  .strow .th{width:56px;height:56px;border-radius:10px;border:2px solid #E5DCC8;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:#fff;padding:0;}
+  .strow .th img{width:100%;height:100%;object-fit:cover;} .strow .th .emoji{font-size:34px;}
+  .strow .tx{font-size:15px;font-weight:700;}
+  .strow .bt{display:flex;gap:4px;} .strow .bt button{border:2px solid #E5DCC8;background:#fff;border-radius:10px;padding:6px 8px;font-size:16px;cursor:pointer;}
+  /* ---------- Scanning: the lit picture or row ---------- */
+  .scanlit{outline:8px solid #FF9800 !important;outline-offset:-2px;z-index:3;position:relative;}
+  .tile.spot.scanlit{outline-offset:2px;}
+  #scanCatch{position:fixed;left:0;right:0;bottom:0;z-index:25;display:none;}
+  body.scan #scanCatch{display:block;}
+  #scanCatch .again{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(43,29,14,.85);color:#fff;border-radius:16px;padding:14px 20px;font-size:20px;font-weight:800;display:none;}
+  #scanCatch.idle .again{display:block;}
+
+  /* ---------- Modelling: the bar turns purple, with 👆 (a hint) and ✕ ---------- */
+  #modelBtns{position:absolute;left:6px;top:50%;transform:translateY(-50%);display:none;gap:6px;}
+  #modelBtns button{width:46px;height:46px;border:none;border-radius:12px;font-size:24px;line-height:1;cursor:pointer;background:rgba(255,255,255,.2);color:#fff;}
+  #modelHint.armed{background:#FFD21F;}
+  body.modelling #banner{background:#5E35B1;padding-left:112px;}
+  body.modelling #banner.flash{background:var(--green);}
+  body.modelling #modelBtns{display:flex;}
+  body.modelling #sentBtns{display:none !important;}
+  .tile.hint::after{content:"";position:absolute;inset:-6px;border-radius:24px;pointer-events:none;border:6px dashed #5E35B1;animation:hintPulse 1s ease-in-out 5;}
+  @keyframes hintPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.5}}
+  .wow{position:absolute;top:2px;left:4px;font-size:clamp(14px,3.6vw,22px);line-height:1;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3));}
+  .cgrid.choose{grid-template-columns:1fr 1fr;}
+  .chooserow{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:560px;}
+  .chooserow .ctile .tile{width:100%;height:min(30vh,44vw);}
+  .chooserow.n2{grid-template-columns:1fr;max-width:min(70vw,38vh);}
+  .chooserow.n2 .ctile .tile{height:min(30vh,60vw);}
+  .chooserow .ctile.faded .tile{opacity:.3;}
+  .loglist div{display:grid;grid-template-columns:70px 1fr;gap:8px;padding:5px 2px;border-bottom:1px solid #EFE6D3;font-size:15px;}
+  .loglist div.health{color:#C8342B;font-weight:800;}
+  .loglist small{color:#777;}
+  #timerChip{position:absolute;right:50px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:none;border-radius:50%;
+             padding:0;background:#fff;cursor:pointer;z-index:6;}
+  #timerChip svg{width:100%;height:100%;display:block;}
+  .mins{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+  .mins button{padding:14px 4px;border:2px solid #00838F;border-radius:12px;background:#fff;color:#00838F;font-size:18px;font-weight:900;cursor:pointer;}
+  .tray{display:flex;gap:8px;flex-wrap:wrap;min-height:28px;margin:6px 0 10px;font-size:15px;font-weight:700;}
+  .tray span{background:#EEF4FA;border:2px solid #3C6E9F;border-radius:20px;padding:4px 10px;}
+  .cgrid .tile.picked{outline:5px solid #0057FF;outline-offset:-2px;}
+  .visit{display:grid;grid-template-columns:70px 1fr auto 44px;align-items:center;gap:6px;margin-bottom:6px;font-size:15px;}
+  .visit input[type=date]{font-size:16px;padding:6px;}
+  .visit button.plain{margin:0;padding:6px;}
+  .visit small{grid-column:1/-1;color:#555;margin:-2px 0 6px;}
 </style>
 </head>
 <body>
 
-<div id="banner"><div id="sentBtns"><button id="sentSay" aria-label="Say the whole sentence">🔊</button><button id="sentClear" aria-label="Start the sentence again">✕</button></div><span id="said">Tap a picture to talk</span><button id="gear" aria-label="Settings (hold)">⚙</button></div>
+<div id="banner"><div id="modelBtns"><button id="modelHint" aria-label="Hint: show him a picture without saying it">👆</button><button id="modelStop" aria-label="Stop modelling">✕</button></div><div id="sentBtns"><button id="sentSay" aria-label="Say the whole sentence">🔊</button><button id="sentClear" aria-label="Start the sentence again">✕</button></div><span id="said">Tap a picture to talk</span><button id="timerChip" hidden aria-label="The wait timer"></button><button id="gear" aria-label="Settings (hold)">⚙</button></div>
 <div id="core"></div>
 <div id="nav">
   <button class="arrow" id="prev" aria-label="Previous page"></button>
@@ -365,6 +509,13 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   <div class="sheet">
     <h2>Settings</h2>
     <p class="hint">For caregivers: hold the ⚙ for 1 second to open.</p>
+    <div class="tools" id="tools">
+      <button class="tool" id="toolTimer"><span>⏳</span><b id="toolTimerTxt">Wait timer</b></button>
+      <button class="tool" id="toolNext"><span>➡️</span><b id="toolNextTxt">First, then</b></button>
+      <button class="tool" id="toolChoose"><span>🤔</span><b>Choose between</b></button>
+      <button class="tool" id="toolModel"><span>🧑‍🏫</span><b id="toolModelTxt">Modelling</b></button>
+      <button class="tool" id="toolLock"><span>🔒</span><b id="toolLockTxt">Stay on this page</b></button>
+    </div>
 
     <h3>Voice</h3>
     <div id="voiceList"></div>
@@ -381,6 +532,7 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
       <label class="big" for="vol">Volume: <span id="volVal">1.0</span></label>
       <input type="range" id="vol" min="0.1" max="1" step="0.1" value="1">
     </div>
+    <label class="choice"><input type="checkbox" id="loudOn"><span><strong>Loud voice</strong> <small>Evens out the voice and makes it louder, for a noisy room or a quiet phone speaker. Turn the phone's own volume up too.</small></span></label>
 
     <h3>Pages to show</h3>
     <div class="pages" id="pageList"></div>
@@ -391,6 +543,23 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
 
     <h3>Turning pages</h3>
     <label class="choice"><input type="checkbox" id="swipeOn"><span><strong>Swipe to change pages</strong> <small>The ◀ ▶ arrows always work too.</small></span></label>
+
+    <h3>Page stickers (QR and NFC)</h3>
+    <p class="sub" style="margin:0 0 10px">A sticker by the fridge can open Food, one by the door Places. Scan a QR sticker from the page list (tap the page name, then 📷), or with the phone's camera. A sticker only turns the page; it never says anything by itself.</p>
+    <a class="about-link" href="print.html?stickers=1" style="margin:0 0 10px">🏷️ QR stickers to print ›</a>
+    <div id="nfcBox" hidden>
+      <label class="choice"><input type="checkbox" id="nfcOn"><span><strong>Read NFC stickers while Talanoa is open</strong> <small>Touch the back of the phone to an NFC sticker to open its page. The phone asks once to allow NFC.</small></span></label>
+      <div class="btnrow"><select id="nfcPage" aria-label="Page for the sticker" style="font-size:16px;padding:8px;border-radius:10px"></select><button class="plain" id="nfcWrite">Write a sticker</button></div>
+      <div id="nfcStat" class="sub" style="margin:-4px 0 10px"></div>
+    </div>
+
+    <h3>Scanning (if tapping a picture is hard)</h3>
+    <label class="choice"><input type="checkbox" id="scanOn"><span><strong>Scan the pictures</strong> <small>The pictures light up one after another; tap anywhere on the screen (or press a switch) to choose the one that's lit. Hold ⚙ as usual for Settings.</small></span></label>
+    <div id="scanOpts" hidden>
+      <div class="row"><label class="big" for="scanSpeed">Each one lights up for: <span id="scanSpeedVal"></span></label><input type="range" id="scanSpeed" min="1" max="5" step="0.5"></div>
+      <label class="choice"><input type="checkbox" id="scanRows"><span><strong>Rows first</strong> <small>A whole row lights up, then the pictures in the chosen row: quicker once he knows it.</small></span></label>
+      <label class="choice"><input type="checkbox" id="scanSay"><span><strong>Say each picture's name as it lights up</strong></span></label>
+    </div>
 
     <h3>Fun effects</h3>
     <div id="fxList">
@@ -405,22 +574,33 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
     <label class="choice"><input type="checkbox" id="strongOn"><span><strong>Darker page names</strong> <small>Darkens the lighter colours a little (I want, Food, Fun, Mom &amp; Dad, Yes) so the white writing is easier to read.</small></span></label>
 
     <h3>Talking in sentences</h3>
-    <label class="choice"><input type="checkbox" id="sentOn"><span><strong>Build sentences</strong> <small>Each picture is still said straight away, and its words also line up at the top. 🔊 says them all, one after another; ✕ starts again.</small></span></label>
+    <label class="choice"><input type="checkbox" id="sentOn"><span><strong>Build sentences</strong> <small>Each picture is still said straight away, and its words also line up at the top. 🔊 says them all, one after another; ✕ starts again. The next picture after 🔊 starts a new sentence, and so does a 2-minute pause.</small></span></label>
     <label class="choice"><input type="checkbox" id="suggestOn"><span><strong>Word suggestions on the ABC page</strong> <small>Three words to pick from above the letters, from what's been typed so far (words he has spoken before come first; they're remembered while Count taps on this phone is on).</small></span></label>
     <label class="choice"><input type="checkbox" id="numbersOn"><span><strong>Numbers on the ABC page</strong> <small>A row of numbers (1 to 9, then 0) under the letters. Numbers are said as words (15: "fifteen").</small></span></label>
     <label class="choice"><input type="checkbox" id="recentOn"><span><strong>Recent sentences with the big words</strong> <small>The big words also show the last few things said; tap one to say it again.</small></span></label>
+
+    <h3>Visits (the Time page)</h3>
+    <p class="sub" style="margin:0 0 10px">When is Dad coming? and When is Mom coming? on the Time page count down to the next visit set here. With no date set, they just ask the question.</p>
+    <div class="visit" id="visit-dad"><b>👨 Dad</b><input type="date" aria-label="Dad's next visit"><label><input type="checkbox"> every week</label><button class="plain" aria-label="Clear Dad's visit">✕</button><small></small></div>
+    <div class="visit" id="visit-mom"><b>👩 Mom</b><input type="date" aria-label="Mom's next visit"><label><input type="checkbox"> every week</label><button class="plain" aria-label="Clear Mom's visit">✕</button><small></small></div>
 
     <h3>Screen</h3>
     <div id="screenStat" class="sub" style="margin:0 0 8px"></div>
     <label class="choice"><input type="checkbox" id="sixOn"><span><strong>Bigger pictures (6 on a screen)</strong> <small>Each page shows 6 bigger pictures; its other 6 are on the next screen ("Food 2").</small></span></label>
     <label class="choice"><input type="checkbox" id="roomOn"><span><strong>Bottom row hidden behind the ◀ ● ■ buttons?</strong> <small>Tick this to move the board up above them. Usually it fits by itself.</small></span></label>
+    <label class="choice"><input type="checkbox" id="awakeOn"><span><strong>Keep the screen on</strong> <small>The screen stays on for 5 minutes after each tap, so it doesn't go dark in the middle of a sentence. Then the phone locks as usual.</small></span></label>
 
     <h3>Photos and voices</h3>
     <p class="sub" style="margin:0 0 10px">Give any picture a photo (take one, or choose one already on this phone), or record a voice for it (a family member saying the Tongan words, for example). They're kept on this phone only, never put on the website.</p>
     <button class="plain" id="ownOpen">📷 🎙️ Change a picture or voice…</button>
+    <button class="plain" id="ownNew">➕ Make a new picture…</button>
+    <div class="btnrow"><button class="plain" id="ownScene">🏞️ Make a scene…</button><button class="plain" id="ownStory">📖 Make a story…</button></div>
+    <div id="mineList" class="chips"></div>
     <div id="ownStat" class="sub" style="margin:-6px 0 10px"></div>
     <div class="btnrow"><button class="plain" id="ownSave">Save a backup</button><button class="plain" id="ownLoad">Restore a backup</button></div>
-    <input type="file" id="ownFile" accept="application/json,.json" hidden>
+    <button class="plain" id="ownSend" hidden>📤 Send a backup to another phone</button>
+    <div id="backupStat" class="sub" style="margin:-6px 0 10px"></div>
+    <input type="file" id="ownFile" accept="application/json,.json,text/plain,.txt" hidden>
 
     <h3>Most-used pictures</h3>
     <p class="sub" style="margin:0 0 10px">Counted on this phone only, never sent anywhere. Quick repeat taps on the same picture (less than 3 seconds apart) count once.</p>
@@ -433,6 +613,9 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
     <div id="weekBox"></div>
     <details class="unused" id="unusedBox"><summary id="unusedSum"></summary><div id="unusedList"></div></details>
     <label class="choice"><input type="checkbox" id="countOn"><span><strong>Count taps on this phone</strong></span></label>
+    <label class="choice"><input type="checkbox" id="logOn"><span><strong>Keep a list of what was said today</strong> <small>Each picture or spelled sentence, with the time, kept on this phone for 2 days only and never sent anywhere. Health words (Ouch, Body, Sick, Help) are shown in red.</small></span></label>
+    <details class="unused" id="logBox" hidden><summary id="logSum"></summary><div class="seg" id="logDay"><label class="choice"><input type="radio" name="logday" value="0" checked> Today</label><label class="choice"><input type="radio" name="logday" value="1"> Yesterday</label></div><div id="logList"></div></details>
+    <label class="choice"><input type="checkbox" id="healthOn"><span><strong>Chime for health words</strong> <small>A chime comes before anything on Ouch, Body or Sick, and Help, so staff across the room hear it.</small></span></label>
     <button class="plain" id="countClear">Clear the counts</button>
 
     <h3>Status</h3>
@@ -441,7 +624,7 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
     <button class="plain" id="checkUpdate">Check for updates now</button>
     <div id="clipStat" class="stat" hidden></div>
     <div class="warn"><strong>Tip:</strong> on the phone or tablet, open this page in Chrome, then menu ⋮ → <strong>Add to Home screen</strong> (or <strong>Install app</strong>). It opens full screen like an app and keeps working with no internet.</div>
-    <p class="sub">Pictures: <a href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noopener">Fluent Emoji</a> © Microsoft, MIT licence. Voices: <a href="https://github.com/hexgrad/kokoro" target="_blank" rel="noopener">Kokoro</a>, Apache 2.0. ABC page words: wordfreq (CC BY-SA 4.0) and WordNet 3.0.</p>
+    <p class="sub">Pictures: <a href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noopener">Fluent Emoji</a> © Microsoft, MIT licence. Voices: <a href="https://github.com/hexgrad/kokoro" target="_blank" rel="noopener">Kokoro</a>, Apache 2.0. ABC page words: wordfreq (CC BY-SA 4.0) and WordNet 3.0. QR stickers: QR Code Generator (MIT) and jsQR (Apache 2.0).</p>
 
     <a class="about-link" href="manual/">📖 Staff guide ›</a>
     <a class="about-link" href="print.html">🖨 Paper board to print ›</a>
@@ -451,23 +634,67 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   </div>
 </div>
 
+<div class="overlay" id="sceneEd">
+  <div class="sheet">
+    <h2 id="seTitle"></h2>
+    <p class="hint">Tap the photo where a spot should go, then choose what it says. Tap a spot to change or remove it.</p>
+    <div id="seBox"></div>
+    <div class="btnrow"><button class="plain" id="seCam">📷 Take a new photo</button><button class="plain" id="seGal">🖼️ Choose a photo</button></div>
+    <input type="file" id="seCamFile" accept="image/*" capture="environment" hidden><input type="file" id="seGalFile" accept="image/*" hidden>
+    <div class="seg" id="seSize"><label class="choice"><input type="radio" name="sesize" value="s"> Small spots</label><label class="choice"><input type="radio" name="sesize" value="m"> Medium</label><label class="choice"><input type="radio" name="sesize" value="l"> Big</label></div>
+    <label class="choice"><input type="checkbox" id="seWords"><span>Show the words on the spots</span></label>
+    <div class="btnrow"><button class="plain" id="seRename">✏️ Rename</button><button class="plain" id="seDelete">🗑 Delete the scene</button></div>
+    <button class="close" id="seDone">Done</button>
+  </div>
+</div>
+
+<div class="overlay" id="storyEd">
+  <div class="sheet">
+    <h2 id="stTitle"></h2>
+    <p class="hint">Each step is a picture and a line of words. Tap a step's picture to give it a photo or a recording.</p>
+    <div id="stSteps"></div>
+    <button class="plain" id="stAdd">➕ Add a step</button>
+    <div class="btnrow"><button class="plain" id="stRename">✏️ Rename</button><button class="plain" id="stDelete">🗑 Delete the story</button></div>
+    <button class="close" id="stDone">Done</button>
+  </div>
+</div>
+
+<div class="overlay" id="spotSheet">
+  <div class="sheet">
+    <h2 id="spTitle">A spot</h2>
+    <button class="plain" id="spPick">🧩 Say one of the board's pictures…</button>
+    <button class="plain" id="spType">⌨️ Type the words…</button>
+    <button class="plain" id="spVoice" hidden>🎙️ Record a voice for it…</button>
+    <button class="plain" id="spDel" hidden>🗑 Remove this spot</button>
+    <button class="close" id="spCancel">Cancel</button>
+  </div>
+</div>
+
 <div class="overlay" id="chooser">
   <div class="sheet">
     <h2>Change a picture or voice</h2>
-    <p class="hint">Choose a page, then tap the picture to change. 📷 = has a photo, 🎙️ = has a recording.</p>
+    <p class="hint" id="chooserHint">Choose a page, then tap the picture to change. 📷 = has a photo, 🎙️ = has a recording.</p>
     <div class="chips" id="chooserPages"></div>
     <div class="cgrid" id="chooserGrid"></div>
+    <button class="plain" id="chooserWalk">🎙️ Go through this page, one picture at a time</button>
     <button class="close" id="chooserDone">Done</button>
   </div>
 </div>
 
 <div class="overlay" id="editor">
   <div class="sheet">
+    <div class="walk" id="edWalk" hidden><button class="plain" id="edPrev">‹ Back</button><b id="edWalkN"></b><button class="plain" id="edNext">Next ›</button></div>
     <h2 id="edTitle"></h2>
     <p class="hint" id="edSays"></p>
     <div id="edPic"></div>
+    <div id="edMine" hidden>
+      <div class="row"><label class="big" for="edLabel">Words under the picture</label><input id="edLabel" class="find" maxlength="40" autocomplete="off" placeholder="Pizza"></div>
+      <div class="row"><label class="big" for="edSay">What it says <small>(empty: the words above)</small></label><input id="edSay" class="find" maxlength="200" autocomplete="off"></div>
+      <div class="row"><label class="big" for="edPage">Page</label><select id="edPage"></select></div>
+    </div>
     <h3>Picture</h3>
     <div class="btnrow"><button class="plain" id="edCamera">📷 Take a photo</button><button class="plain" id="edGallery">🖼️ Choose a photo</button></div>
+    <button class="plain" id="edIcon" hidden>🙂 Use one of the board's pictures</button>
     <button class="plain" id="edPhotoOff" hidden>Use the original picture again</button>
     <input type="file" id="edCamFile" accept="image/*" capture="environment" hidden>
     <input type="file" id="edGalFile" accept="image/*" hidden>
@@ -476,7 +703,27 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
     <div class="btnrow" id="edKeepRow" hidden><button class="plain" id="edKeep">✔ Keep this recording</button><button class="plain" id="edRedo">✖ Throw it away</button></div>
     <button class="plain" id="edVoiceOff" hidden>Use the original voice again</button>
     <div id="edNote" class="sub"></div>
+    <button class="plain" id="edDelete" hidden>🗑 Delete this picture</button>
     <button class="close" id="edDone">Done</button>
+  </div>
+</div>
+
+<div class="overlay" id="iconPick">
+  <div class="sheet">
+    <h2>Choose a picture</h2>
+    <input type="search" id="iconFind" class="find" placeholder="Find: type a word, like dog" autocomplete="off" aria-label="Find a picture">
+    <div class="igrid" id="iconGrid"></div>
+    <button class="close" id="iconDone">Cancel</button>
+  </div>
+</div>
+
+<div class="overlay" id="shared">
+  <div class="sheet">
+    <h2>A photo for Talanoa</h2>
+    <div id="sharedPic"></div>
+    <button class="plain" id="sharedNew">➕ Make a new picture with it</button>
+    <button class="plain" id="sharedOld">🖼️ Put it on a picture already on the board</button>
+    <button class="close" id="sharedCancel">Cancel</button>
   </div>
 </div>
 
@@ -485,6 +732,57 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   <div id="showRecent" aria-label="Said before"></div>
   <div id="showBtns"><button id="showAgain">🔊 Say it again</button><button id="showClose">✕ Close</button></div>
 </div>
+
+<div id="infoView" role="dialog" aria-label="The answer">
+  <div id="infoBody"></div>
+  <div id="infoExtra"><button id="infoDone" class="bigbtn" hidden></button></div>
+  <div id="infoBtns"><button id="infoSay">🔊 Say it</button><button id="infoClose">✕ Close</button></div>
+</div>
+
+<div class="overlay" id="timerSheet">
+  <div class="sheet">
+    <h2>Wait timer</h2>
+    <p class="hint" id="timerHint">A pie that shrinks while he waits, and a chime at the end. Choose how long:</p>
+    <div class="mins" id="timerMins"></div>
+    <div class="row"><b>Then (if you like):</b> <span id="timerThen" class="sub">nothing chosen</span></div>
+    <div class="btnrow"><button class="plain" id="timerThenPick">Choose what comes next…</button><button class="plain" id="timerThenOff">No picture</button></div>
+    <button class="plain" id="timerStop" hidden>⏹ Stop the timer</button>
+    <button class="close" id="timerDone">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="modelSheet">
+  <div class="sheet">
+    <h2>Modelling</h2>
+    <p class="hint">Use the board yourself while you talk with him: the best way to teach it. While modelling is on, your taps are said but not counted, and the brown bar turns purple. 👆 then a picture makes it glow for a moment without saying it (a hint). It switches itself off after 10 minutes without a tap.</p>
+    <button class="plain" id="modelGo">🧑‍🏫 Start modelling</button>
+    <h3>Word of the week</h3>
+    <p class="sub" style="margin:0 0 10px">One picture to use often this week. It gets a small gold star on the board for 7 days, to remind everyone to show it.</p>
+    <div id="wowNow" class="sub" style="margin:0 0 8px"></div>
+    <div class="btnrow"><button class="plain" id="wowPick">Choose a picture…</button><button class="plain" id="wowOff">No word of the week</button></div>
+    <button class="close" id="modelDone">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="tilePick">
+  <div class="sheet">
+    <h2 id="tpTitle"></h2>
+    <p class="hint" id="tpHint"></p>
+    <div class="chips" id="tpPages"></div>
+    <div class="cgrid" id="tpGrid"></div>
+    <div class="tray" id="tpTray"></div>
+    <div class="btnrow"><button class="plain" id="tpCancel">Cancel</button><button class="plain" id="tpOk">Done</button></div>
+  </div>
+</div>
+
+<div id="scanView" role="dialog" aria-label="Scan a QR sticker">
+  <video id="scanVideo" playsinline muted></video>
+  <div id="scanMsg">Point the camera at a Talanoa sticker</div>
+  <button id="scanClose">✕ Close</button>
+</div>
+<div id="flashLayer" aria-hidden="true"></div>
+<div id="scanCatch" aria-hidden="true"><div class="again">Tap to start scanning</div></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script src="library.js"></script>
 <script src="assets.js"></script>
@@ -517,6 +815,8 @@ function blank(item){ return !item || !item.label; }     /* {"empty": true} keep
 LIB.core.forEach(function(it){ it._key = 'core|' + it.label; });
 LIB.pages.forEach(function(p){ p.tiles.forEach(function(t){ if (!blank(t)) t._key = p.name + '|' + t.label; }); });
 var own = {};                 /* this phone's own photos and recordings: see PHOTOS AND VOICES */
+var mineRecs = {};            /* pictures, pages, scenes and stories made on this phone: see MADE ON THIS PHONE */
+var MY_PAGES = [], MINE_KINDS = {};   /* their pages (scenes and stories fill in MINE_KINDS) */
 
 /* ---------------- colours ---------------- */
 function mix(hex, to, amt){
@@ -812,13 +1112,32 @@ function sleepSoon(){
 function wakeSound(){ if (actx && actx.state === 'suspended'){ try { actx.resume().catch(function(){}); } catch(e){} sleepSoon(); } }
 document.addEventListener('pointerdown', wakeSound, true);      /* the finger touching wakes the sound before it lifts */
 document.addEventListener('visibilitychange', function(){ if (document.hidden && actx && actx.state === 'running'){ clearTimeout(sleepT); actx.suspend(); } });
+/* Settings → Voice → Loud voice (off unless chosen): the voice goes through a compressor that evens out
+   its soft and loud parts, then is made louder, with a limiter so the loudest bits never crackle.
+   Measured 2026-10-11 on 11 of Michael's clips: on average 6 dB louder (-19.2 → -13.4 dB), the
+   loudest peak still under full scale (-0.4 dB). Only the Web Audio voice can go through it (nearly
+   every tap, and spelled words on the ABC page); the <audio> fallback and the phone's own voice
+   stay as they are. */
+var LOUD = store('tt2_loud') === '1', loudIn = null, LOUD_GAIN = 1.6;
+function outNode(c){
+  if (!LOUD) return c.destination;
+  if (!loudIn || loudIn.context !== c){
+    var comp = c.createDynamicsCompressor(), make = c.createGain(), lim = c.createDynamicsCompressor();
+    comp.threshold.value = -30; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.12;
+    make.gain.value = LOUD_GAIN;
+    lim.threshold.value = -3; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = 0.001; lim.release.value = 0.05;
+    comp.connect(make); make.connect(lim); lim.connect(c.destination);
+    loudIn = comp;
+  }
+  return loudIn;
+}
 /* Play a decoded clip now. Returns false if it can't. */
 function playQuick(src, q){
   var c = actx, s, g;
   try {
     s = c.createBufferSource(); s.buffer = q.buf;
     g = c.createGain(); g.gain.value = vol;
-    s.connect(g); g.connect(c.destination);
+    s.connect(g); g.connect(outNode(c));
     s.start(0, q.at);
   } catch(e){ return false; }
   var t0 = c.currentTime, len = q.buf.duration;
@@ -874,7 +1193,10 @@ function say(id, text, item, again, html){
   stopTalking();
   var my = token, src = clipFor(id, text, item);
   var words = item && item.sound && item.sound.charAt(0) !== '/' ? item.sound : text;   /* "/…/" is for the natural voice only */
-  if (!src){ speakDevice(words); return; }
+  if (!src){
+    if (item && item._custom && boardVoiceCan(text)){ sayTyped(text); return; }   /* made on this phone: the board's voice, word by word */
+    speakDevice(words); return;
+  }
   if (!html && sayQuick(src, my, function(){ say(id, text, item, again, true); })) return;   /* decoded: Web Audio */
   if (!html) prepare(src);                                      /* ready the quick way for the next tap */
   var a = getAudio(src), started = false, done = false;
@@ -950,15 +1272,25 @@ function sayEntry(e){
 }
 function announce(item, el){
   if (item.kb){ keyPress(item, el); return; }      /* a key on the ABC page */
+  if (item.act){ item.act(el); return; }           /* a story's Back / Next */
+  if (hintArmed){                                  /* modelling: 👆 then a picture glows, nothing said or counted */
+    hintArmed = false; document.getElementById('modelHint').classList.remove('armed');
+    hintTile(el); return;
+  }
   var text = item.say || item.label;
   var shown = item.means ? text + ' (' + item.means + ')' : text;   /* Mālō (Thank you) */
   setLast({id: slug(item.label), text: text, item: item, shown: shown});
-  say(slug(item.label), text, item);   /* the voice first: everything else can wait a moment */
+  if (item.chime || (HEALTH && isHealth(item._key))) chimeFirst(function(){ say(slug(item.label), text, item); });   /* Hey! (and health words, if chosen): the chime, then the words */
+  else say(slug(item.label), text, item);   /* the voice first: everything else can wait a moment */
+  if (AWAKE) keepAwake(AWAKE_FOR);
   show(shown, item);
   if (SENT) addToSentence({id: slug(item.label), text: text, item: item});
   flashBanner();
   countTap(item);
-  if (item.show) openShow(shown);  /* a tile marked "show" (none at the moment): big enough to hand the phone over */
+  logSaid(shown, item);
+  if (infoKind === 'choose' && el && infoBody.contains(el)) markChoice(el);
+  if (item.show) openShow(shown);  /* a tile marked "show" (Please wait, on Hey): big enough to hand the phone over */
+  if (item.shows) openCard(item.shows);   /* the Time page: the answer, on a card (see THE TIME PAGE) */
   afterVoiceStarts(function(){ celebrate(el, item); });
 }
 /* The sparkles wait until the voice has started (150 ms at most). On a slower phone, starting
@@ -972,13 +1304,89 @@ function afterVoiceStarts(fn){
 }
 
 /* ============================================================
+   GETTING ATTENTION ("chime": true in library.js: Hey!, Excuse me)
+   A two-note chime and a soft yellow flash over the screen come
+   first, then the words, so someone across the room turns to look
+   before the words start. The chime is made here (no recording), at
+   the board's volume; the flash is left out with Fun effects Off.
+   A phone that can't play it goes straight to the words.
+   ============================================================ */
+function flashScreen(){
+  if (FX_LEVEL === 'off') return;
+  var f = document.getElementById('flashLayer');
+  f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+  clearTimeout(f._t); f._t = setTimeout(function(){ f.classList.remove('go'); }, 1000);
+}
+function chimeFirst(then){
+  stopTalking();
+  var c = audioCtx(), my = token;
+  flashScreen();
+  function words(){ if (my === token) then(); }
+  if (!c){ words(); return; }
+  function ring(){
+    if (my !== token) return;
+    try {
+      var t = c.currentTime + 0.02, out = outNode(c);
+      [[1046.5, 0], [784, 0.2]].forEach(function(n){                     /* C6 then G5: "ding-dong" */
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = 'sine'; o.frequency.value = n[0];
+        g.gain.setValueAtTime(0.0001, t + n[1]);
+        g.gain.exponentialRampToValueAtTime(0.3 * vol, t + n[1] + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + n[1] + 0.5);
+        o.connect(g); g.connect(out); o.start(t + n[1]); o.stop(t + n[1] + 0.55);
+      });
+      window.__chimes = (window.__chimes || 0) + 1;                       /* for the tests */
+    } catch(e){ words(); return; }
+    clearTimeout(sleepT);
+    setTimeout(words, 430);
+  }
+  if (c.state === 'running') ring();
+  else c.resume().then(ring, words);
+}
+
+/* ============================================================
+   KEEP THE SCREEN ON (Settings → Screen; off unless chosen)
+   Each tap keeps the screen on for 5 more minutes, so it doesn't go
+   dark in the middle of a sentence; after that the phone dims and
+   locks as usual. (A wait timer keeps it on while it runs, too.)
+   ============================================================ */
+var AWAKE = store('tt2_awake') === '1', AWAKE_FOR = 5 * 60 * 1000;
+var wakeLock = null, wakeAsking = false, awakeUntil = 0, awakeT = null;
+function keepAwake(ms){
+  if (!navigator.wakeLock) return;
+  awakeUntil = Math.max(awakeUntil, Date.now() + ms);
+  clearTimeout(awakeT);
+  awakeT = setTimeout(letSleep, Math.max(0, awakeUntil - Date.now()) + 50);
+  if (wakeLock || wakeAsking || document.hidden) return;
+  wakeAsking = true;
+  navigator.wakeLock.request('screen').then(function(l){
+    wakeAsking = false; wakeLock = l;
+    l.addEventListener('release', function(){ if (wakeLock === l) wakeLock = null; });
+    if (Date.now() >= awakeUntil) letSleep();
+  }, function(){ wakeAsking = false; });
+}
+function letSleep(){
+  if (Date.now() < awakeUntil){ keepAwake(0); return; }
+  if (wakeLock){ var l = wakeLock; wakeLock = null; try { l.release().catch(function(){}); } catch(e){} }
+}
+/* The phone drops the lock when Talanoa goes off screen; ask again when it's back, if there's time left. */
+document.addEventListener('visibilitychange', function(){ if (!document.hidden && Date.now() < awakeUntil) keepAwake(0); });
+
+/* ============================================================
    BUILDING SENTENCES (Settings → Talking in sentences; off unless chosen)
    Each picture is still said straight away, as always. Its words also
    line up in the banner: 🔊 says the whole sentence, each piece in its
    own recording; ✕ starts again. Words spoken on the ABC page join in
-   too. The sentence stays until ✕ (after 12 pieces the oldest drops off).
+   too (after 12 pieces the oldest drops off).
+   2026-10-11 (Tim: tapping Hug four times put "I want a hug" in the
+   sentence four times, and the old sentence never went away): the same
+   picture tapped again straight after is still said, but goes in the
+   sentence once; after 🔊 has said the sentence, the next picture starts
+   a new one; and a sentence nothing is added to for 2 minutes clears
+   itself, like the words at the top going back after 30 seconds.
    ============================================================ */
 var SENT = store('tt2_sentence') === '1', sentence = [], SENT_MAX = 12, chain = 0;
+var SENT_FRESH = 2 * 60 * 1000, sentT = null, sentSaid = false;
 document.body.classList.toggle('sent', SENT);
 function sentenceText(parts){ return (parts || sentence).map(function(p){ return p.text; }).join(' '); }
 function showSentence(){
@@ -989,12 +1397,17 @@ function showSentence(){
   while (i < parts.length - 1 && said.scrollWidth > said.clientWidth + 1){ i++; said.textContent = '… ' + parts.slice(i).join(' '); }
 }
 function addToSentence(part){
-  sentence.push(part);
+  if (sentSaid) sentence = [];                         /* 🔊 has said the last one: this picture starts a new sentence */
+  sentSaid = false;
+  var last = sentence[sentence.length - 1];
+  if (!last || last.text !== part.text || !!last.typed !== !!part.typed) sentence.push(part);   /* the same again: once */
   if (sentence.length > SENT_MAX) sentence.shift();
+  freshSoon();
   showSentence();
 }
+function freshSoon(){ clearTimeout(sentT); sentT = setTimeout(function(){ if (sentence.length) clearSentence(); }, SENT_FRESH); }
 function clearSentence(){
-  sentence = []; chain++;
+  sentence = []; chain++; sentSaid = false; clearTimeout(sentT);
   showSentence();
   said.textContent = HINT; litItem = null; lightUp();
 }
@@ -1025,6 +1438,7 @@ function sentenceSay(e){
   var parts = sentence.slice();
   setLast({sentence: parts, text: sentenceText(parts)});
   saySentence(parts);
+  sentSaid = true; freshSoon();
   flashBanner();
 }
 document.getElementById('sentSay').addEventListener('click', sentenceSay);
@@ -1128,7 +1542,7 @@ function loadRank(){
 }
 function typedWords(){ try { return JSON.parse(store(TYPED_WORDS) || '{}') || {}; } catch(e){ return {}; } }
 function rememberWords(text){
-  if (!countOn) return;                          /* kept with the tap counts: on this phone only, cleared with them */
+  if (!countOn || MODEL) return;                          /* kept with the tap counts: on this phone only, cleared with them */
   var m = typedWords(), now = Date.now();
   text.toLowerCase().split(/\s+/).forEach(function(w){ w = w.replace(/[^a-z]/g, ''); if (w.length > 1) m[w] = {n: ((m[w] || {}).n || 0) + 1, t: now}; });
   var keys = Object.keys(m);
@@ -1188,11 +1602,13 @@ function keyPress(k, el){
       sayTyped(words);
       flashBanner();
       countTap(SPELLED);
+      logSaid(words, SPELLED);
       rememberWords(words);
       if (SENT) addToSentence({text: words, typed: true});
     }
   }
   if (k.kb !== 'speak' && navigator.vibrate){ try { navigator.vibrate(20); } catch(e){} }
+  if (AWAKE) keepAwake(AWAKE_FOR);
   showTyped();
   afterVoiceStarts(function(){ celebrate(el, k); });
 }
@@ -1239,6 +1655,61 @@ function sayTyped(text){
   stopTalking();
   if (!parts.length || parts.some(function(p){ return !p.src; })){ abcQueue = []; speakDevice(text.toLowerCase()); return; }   /* lower case, so CAT is read as a word */
   abcQueue = parts.map(function(p){ return p.src; });
+  if (LOUD && sayTypedLoud(parts, text)) return;
+  sayTypedPlain(parts, text);
+}
+/* Loud voice: a spelled sentence's clips are decoded here (from the phone's saved copy, a few ms each)
+   and played one after another through the loudness chain. Anything not ready within 0.8 s: the usual way. */
+var typedBufs = {}, typedBufOrder = [];
+function decodeClip(src){
+  if (quick[src]) return Promise.resolve(quick[src]);
+  if (typedBufs[src]) return Promise.resolve(typedBufs[src]);
+  return fetch(src).then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(function(b){ return new Promise(function(ok, no){ var p = actx.decodeAudioData(b, ok, no); if (p && p.then) p.then(ok, no); }); })
+    .then(function(buf){
+      var q = typedBufs[src] = {buf: buf, at: leadIn(buf)}; typedBufOrder.push(src);
+      if (typedBufOrder.length > 40) delete typedBufs[typedBufOrder.shift()];
+      return q;
+    });
+}
+function sayTypedLoud(parts, text){
+  var c = audioCtx();
+  if (!c || c.state === 'closed') return false;
+  var my = token, settled = false;
+  typedLeft = parts.length;
+  function plain(){ if (!settled){ settled = true; if (my === token) sayTypedPlain(parts, text); } }
+  var t = setTimeout(plain, 800);
+  Promise.all(parts.map(function(p){ return decodeClip(p.src); })).then(function(qs){
+    if (settled) return;
+    settled = true; clearTimeout(t);
+    if (my !== token) return;
+    function go(){ if (my === token && !playChain(qs, parts)) sayTypedPlain(parts, text); }
+    if (c.state === 'running') go(); else c.resume().then(go, function(){ if (my === token) sayTypedPlain(parts, text); });
+  }, function(){ clearTimeout(t); plain(); });
+  return true;
+}
+/* The clips back to back, each after its little gap, all scheduled at once (so the gaps are exact). */
+function playChain(qs, parts){
+  var c = actx, at = c.currentTime + 0.02, srcs = [], left = qs.length, out = outNode(c);
+  try {
+    qs.forEach(function(q, k){
+      q = atSpeed(q);
+      var s = c.createBufferSource(), g = c.createGain();
+      s.buffer = q.buf; g.gain.value = vol; s.connect(g); g.connect(out);
+      at += parts[k].gap / 1000;
+      s.start(at, q.at);
+      at += Math.max(0, q.buf.duration - q.at);
+      s.onended = function(){ left--; if (p.paused) return; typedLeft = left; if (!left){ p.ended = true; sleepSoon(); } };
+      srcs.push(s);
+    });
+  } catch(e){ srcs.forEach(function(s){ try { s.stop(); } catch(x){} }); return false; }
+  var p = {quick: srcs[0], quickSrc: null, src: '', paused: false, ended: false, error: null, currentTime: 0,
+           pause: function(){ if (!p.paused && !p.ended){ p.paused = true; typedLeft = 0; srcs.forEach(function(s){ try { s.stop(); } catch(e){} }); } }};
+  nowPlaying = p;
+  clearTimeout(sleepT);
+  return true;
+}
+function sayTypedPlain(parts, text){
   var my = token, i = 0;
   typedLeft = parts.length;
   function next(){
@@ -1279,14 +1750,23 @@ var PER_PAGE = 12;
    A screen with nothing on it is left out. */
 var SIX = store('tt2_six') === '1';
 var allPages = [];            /* long pages are split into "Food 2", "Food 3", ... */
+/* The board's own pages, then the ones made on this phone, then ABC (always last). */
+function boardPages(){
+  var kb = LIB.pages.filter(function(p){ return p.keyboard; });
+  return LIB.pages.filter(function(p){ return !p.keyboard; }).concat(MY_PAGES, kb);
+}
 function buildPages(){
   var per = SIX ? 6 : PER_PAGE;
   allPages = [];
-  LIB.pages.forEach(function(p){
+  boardPages().forEach(function(p){
+    if (p.type && p.type !== 'tiles'){                     /* a scene or a story: one screen of its own */
+      allPages.push({key: 'my-' + p._my, name: p.name, icon: p.icon, img: p.img, color: p.color, per: per, tiles: p.tiles || [], type: p.type, mine: p});
+      return;
+    }
     for (var i = 0, part = 0; i < Math.max(1, p.tiles.length); i += per){
       var tiles = p.tiles.slice(i, i + per);
       if (i && !tiles.some(function(t){ return !blank(t); })) continue;
-      allPages.push({key: slug(p.name), name: p.name + (part ? ' ' + (part + 1) : ''), icon: p.icon, img: p.img, fx: p.fx,
+      allPages.push({key: p._my ? 'my-' + p._my : slug(p.name), name: p.name + (part ? ' ' + (part + 1) : ''), icon: p.icon, img: p.img, fx: p.fx,
                      answer: p.answer, keyboard: p.keyboard, per: per,
                      color: p.color || '#3C6E9F', tiles: tiles});
       part++;
@@ -1310,6 +1790,70 @@ try {
   typed = sessionStorage.getItem('tt2_resume_typed') || '';
   sessionStorage.removeItem('tt2_resume_typed');
 } catch(e){}
+
+/* ============================================================
+   PAGE LINKS: shortcuts on the app's icon, QR and NFC stickers
+   An address ending in ?page=food opens the board at that page:
+   hold the app's icon for its shortcuts, scan a QR sticker on the
+   fridge (Settings → Page stickers), or touch an NFC sticker. A link
+   only turns the page, it never says anything by itself, and
+   "Stay on this page" keeps the board where it is.
+   ============================================================ */
+var SCOPE = location.pathname.replace(/[^\/]*$/, '');            /* "/Talanoa/" */
+function linkKey(url){
+  var u;
+  try { u = new URL(url, location.href); } catch(e){ return null; }
+  if (u.origin !== location.origin || u.pathname.indexOf(SCOPE) !== 0) return null;   /* another site, or Talanoa 2 */
+  var k = u.searchParams.get('page');
+  return k ? slug(k) : null;
+}
+function pageIndex(k){ for (var i = 0; i < pages.length; i++) if (pages[i].key === k) return i; return -1; }
+function linkFor(k){ return new URL('./?page=' + encodeURIComponent(k), location.href).href; }
+var pendingLink = linkKey(location.href);                       /* opened from a shortcut or sticker */
+var touchedYet = false;                                          /* (a page made on this phone loads a moment later) */
+document.addEventListener('pointerdown', function(){ touchedYet = true; pendingLink = null; }, true);
+if (/[?&]page=/.test(location.search)){ try { history.replaceState(history.state, '', location.pathname); } catch(e){} }
+
+/* ============================================================
+   STAY ON THIS PAGE (Settings → 🔒 at the top, for staff)
+   At a meal, say, the board stays on Food: the arrows go, and
+   swiping, the page list, links and stickers don't turn the page
+   (with Bigger pictures, the arrows still move between "Food" and
+   "Food 2"). The top row works as always. It unlocks in Settings, or
+   by itself after 2 hours so a forgotten lock doesn't stay for days.
+   ============================================================ */
+var LOCK_FOR = 2 * 3600 * 1000, LOCKED = null;
+try { LOCKED = JSON.parse(store('tt2_lock') || 'null'); } catch(e){}
+if (LOCKED && !(LOCKED.until > Date.now())){ LOCKED = null; store('tt2_lock', ''); }
+function lockedKey(){
+  if (LOCKED && LOCKED.until <= Date.now()) unlockPage();
+  return LOCKED ? LOCKED.key : null;
+}
+function lockGroup(){                                            /* the screens of the locked page, or null */
+  var k = lockedKey(), g = [];
+  if (!k) return null;
+  pages.forEach(function(p, i){ if (p.key === k) g.push(i); });
+  return g;
+}
+function lockPage(){
+  var p = pages[current];
+  LOCKED = {key: p.key, name: p.name.replace(/ \d+$/, ''), until: Date.now() + LOCK_FOR};
+  store('tt2_lock', JSON.stringify(LOCKED));
+  showPageInfo();
+}
+function unlockPage(){
+  LOCKED = null; store('tt2_lock', '');
+  if (titleBtn) showPageInfo();
+}
+setInterval(function(){ if (LOCKED) lockedKey(); }, 30000);     /* the 2 hours are up: the arrows come back */
+(function(){                                                     /* opened while locked: on the locked page */
+  var k = lockedKey(); if (!k) return;
+  var i = pageIndex(k);
+  if (i === -1){ LOCKED = null; store('tt2_lock', ''); }
+  else if (pages[current].key !== k) current = i;
+  pendingLink = null;
+})();
+if (pendingLink && pageIndex(pendingLink) !== -1){ current = pageIndex(pendingLink); pendingLink = null; }
 var stage = document.getElementById('stage'), gridEl = null;
 var prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next'), titleBtn = document.getElementById('title');
 
@@ -1320,6 +1864,8 @@ function wrap(i){ return (i % pages.length + pages.length) % pages.length; }
 
 function buildGrid(page){
   if (page.keyboard) return buildKeys(page);
+  if (page.type === 'scene') return buildScene(page);    /* made on this phone: see SCENES AND STORIES */
+  if (page.type === 'story') return buildStory(page);
   var g = document.createElement('div');
   g.className = 'grid' + (page.per === 6 ? ' six' : '');
   g._fx = page.fx; g._answer = page.answer;
@@ -1342,6 +1888,8 @@ function render(dir){
   stage.appendChild(gridEl = g);
   fitLabels(g);
   showPageInfo();
+  markWow();
+  if (SCAN) setTimeout(scanStart, 60);         /* scanning: start again on what's now on screen */
   if (dir) turned(dir === 'next' ? 1 : -1);
 }
 
@@ -1363,7 +1911,15 @@ function showPageInfo(){
   if (dots.children.length > 18) dots.className = 'many';
   txt.appendChild(dots); titleBtn.appendChild(txt);
 
-  var prev = pages[wrap(current - 1)], next = pages[wrap(current + 1)];
+  var g = lockGroup(), pi = wrap(current - 1), ni = wrap(current + 1);
+  if (g && g.length > 1){ var at = g.indexOf(current); pi = g[(at - 1 + g.length) % g.length]; ni = g[(at + 1) % g.length]; }
+  prevBtn.classList.toggle('gone', !!g && g.length < 2); nextBtn.classList.toggle('gone', !!g && g.length < 2);
+  if (g){
+    var lk = document.createElement('span'); lk.className = 'lock'; lk.textContent = '🔒'; nm.insertBefore(lk, nm.firstChild);
+    titleBtn.setAttribute('aria-label', 'Page: ' + page.name + '. Staying on this page');
+  }
+  if (nm.scrollWidth > nm.clientWidth + 1) shrinkToFit(nm, 12);   /* a long name made on this phone ("Going to the dentist") */
+  var prev = pages[pi], next = pages[ni];
   prevBtn.innerHTML = CHEVRON_L; prevBtn.appendChild(picture(prev));
   nextBtn.innerHTML = ''; nextBtn.appendChild(picture(next)); nextBtn.insertAdjacentHTML('beforeend', CHEVRON_R);
   prevBtn.setAttribute('aria-label', 'Previous page: ' + prev.name);
@@ -1391,14 +1947,23 @@ function makeTile(item){
 /* Wraps around at the ends, so an arrow tap always does something. */
 function go(step){
   settle();
-  current = wrap(current + step);
+  var g = lockGroup();
+  if (g){                                         /* staying on one page: only between its own screens */
+    if (g.length < 2) return;
+    var at = Math.max(0, g.indexOf(current));
+    current = g[(at + step + g.length) % g.length];
+  }
+  else current = wrap(current + step);
   render(step > 0 ? 'next' : 'prev');
 }
 prevBtn.addEventListener('click', function(){ go(-1); });
 nextBtn.addEventListener('click', function(){ go(1); });
 function overlayOpen(){
   return panel.classList.contains('open') || picker.classList.contains('open') || chooser.classList.contains('open') ||
-         editor.classList.contains('open') || showView.classList.contains('open');
+         editor.classList.contains('open') || showView.classList.contains('open') || scanView.classList.contains('open') ||
+         iconPick.classList.contains('open') || document.getElementById('shared').classList.contains('open') ||
+         infoView.classList.contains('open') || timerSheet.classList.contains('open') || tilePick.classList.contains('open') || modelSheet.classList.contains('open') ||
+         sceneEd.classList.contains('open') || storyEd.classList.contains('open') || spotSheet.classList.contains('open');
 }
 document.addEventListener('keydown', function(e){
   if (overlayOpen()) return;
@@ -1447,7 +2012,7 @@ function listenForTaps(root, canSwipe){
     var dx = e.clientX - f.x, dy = e.clientY - f.y;
     if (e.timeStamp > f.lt){ f.v = (e.clientX - f.lx) / (e.timeStamp - f.lt); f.lx = e.clientX; f.lt = e.timeStamp; }
     if (!f.moved && (Math.abs(dx) > TAP_SLOP || Math.abs(dy) > TAP_SLOP)){ f.moved = true; unpress(f); }
-    if (!f.drag && f.canSwipe && swipeOn && pages.length > 1 &&
+    if (!f.drag && f.canSwipe && swipeOn && pages.length > 1 && !LOCKED &&
         Math.abs(dx) > SWIPE_START && Math.abs(dx) > Math.abs(dy) * 1.2){
       f.drag = true; f.moved = true; f.ox = dx; unpress(f);
     }
@@ -1522,10 +2087,108 @@ function dropPeek(){
 listenForTaps(coreEl, false);
 listenForTaps(stage, true);
 
+/* ============================================================
+   SCANNING (Settings → Scanning; off unless chosen)
+   For when pointing at one picture is hard. The pictures light up one
+   after another (an orange frame): the page's pictures, then the ◀ ▶
+   arrows, then the top row. A tap anywhere below the brown bar chooses
+   the one that's lit, so the whole screen is one big button; a switch
+   that types Space or Enter works too. With "Rows first", a whole row
+   lights up, then the pictures in the chosen row. After 3 rounds with
+   nothing chosen it rests ("Tap to start scanning"). The brown bar
+   isn't covered: hold ⚙ for Settings as usual.
+   ============================================================ */
+var SCAN = store('tt2_scan') === '1', SCAN_MS = parseFloat(store('tt2_scan_speed') || '2') * 1000;
+var SCAN_ROWS = store('tt2_scan_rows') === '1', SCAN_SAY = store('tt2_scan_say') === '1';
+var scanCatch = document.getElementById('scanCatch'), scanT2 = null, scanState = null, scanLastPick = 0;
+function scanRows(){
+  var rows = [], tops = [];
+  var els = gridEl ? [].slice.call(gridEl.querySelectorAll('.tile')).filter(function(e){
+    return e.offsetParent !== null && !e.classList.contains('off') && !e.classList.contains('none') && e._item;
+  }) : [];
+  els.forEach(function(e){                                   /* where it sits, not where a bounce has moved it */
+    var t = Math.round(e.offsetTop / 8), at = tops.indexOf(t);   /* same row: same top, give or take */
+    if (at === -1){ tops.push(t); rows.push([e]); } else rows[at].push(e);
+  });
+  rows.sort(function(a, b){ return a[0].offsetTop - b[0].offsetTop; });
+  var arrows = [prevBtn, nextBtn].filter(function(b){ return !b.classList.contains('gone'); });
+  if (arrows.length) rows.push(arrows);
+  rows.push([].slice.call(coreEl.querySelectorAll('.core-btn')));
+  return rows;
+}
+function scanLight(els){
+  var lit = document.querySelectorAll('.scanlit');
+  for (var i = 0; i < lit.length; i++) lit[i].classList.remove('scanlit');
+  (els || []).forEach(function(e){ e.classList.add('scanlit'); });
+}
+function scanStart(){
+  clearInterval(scanT2); scanLight(null);
+  scanCatch.classList.remove('idle');
+  if (!SCAN) return;
+  scanCatch.style.top = banner.getBoundingClientRect().bottom + 'px';
+  var rows = scanRows();
+  scanState = {rows: rows, list: SCAN_ROWS ? rows : [].concat.apply([], rows).map(function(e){ return [e]; }), inRow: false, i: -1, rounds: 0};
+  scanT2 = setInterval(scanStep, SCAN_MS);
+  scanStep();
+}
+function scanStep(){
+  var st = scanState;
+  if (!st || overlayOpen() || finger) return;                /* something open on top: wait */
+  st.i++;
+  if (st.i >= st.list.length){
+    st.i = 0;
+    if (st.inRow){ st.inRow = false; st.list = st.rows; }    /* nothing chosen in the row: back to the rows */
+    else if (++st.rounds >= 3){ clearInterval(scanT2); scanLight(null); scanCatch.classList.add('idle'); return; }
+  }
+  var els = st.list[st.i];
+  scanLight(els);
+  if (SCAN_SAY && els.length === 1 && els[0]._item && els[0]._item.label && !els[0]._item.kb){
+    var it = els[0]._item; sayPieces(labelPieces(it), it.label);
+  }
+}
+function scanPick(){
+  var st = scanState, now = Date.now();
+  if (!SCAN || now - scanLastPick < 300) return;
+  scanLastPick = now;
+  if (!st || scanCatch.classList.contains('idle') || st.i < 0){ scanStart(); return; }
+  var els = st.list[st.i];
+  if (SCAN_ROWS && !st.inRow && els.length > 1){              /* a row: now its pictures, one by one */
+    st.inRow = true; st.list = els.map(function(e){ return [e]; }); st.i = -1;
+    clearInterval(scanT2); scanT2 = setInterval(scanStep, SCAN_MS); scanStep();
+    return;
+  }
+  var e = els[0];
+  clearInterval(scanT2); scanLight([e]);
+  if (e === prevBtn || e === nextBtn){ e.click(); return; }   /* a page turn: it starts again on the new page (render) */
+  if (e._item) announce(e._item, e);
+  scanAfterVoice();
+}
+/* Start again once the words have been said (and a moment more). */
+function scanAfterVoice(){
+  var t0 = Date.now(), quiet = 0;
+  (function wait(){
+    if (!SCAN) return;
+    var np = nowPlaying, busy = typedLeft > 0 || (np && !np.paused && !np.ended) || !!(synth && synth.speaking) || overlayOpen();
+    quiet = busy ? 0 : quiet + 100;
+    if (quiet >= 900 || Date.now() - t0 > 30000) scanStart(); else setTimeout(wait, 100);
+  })();
+}
+scanCatch.addEventListener('pointerdown', function(e){ e.preventDefault(); scanPick(); });
+scanCatch.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.addEventListener('keydown', function(e){
+  if (!SCAN || overlayOpen() || (e.key !== ' ' && e.key !== 'Enter')) return;
+  e.preventDefault(); scanPick();
+});
+function setScan(on){
+  SCAN = on; document.body.classList.toggle('scan', on);
+  if (on) scanStart(); else { clearInterval(scanT2); scanLight(null); scanState = null; }
+}
+
 /* ---------------- page picker (tap the page name) ---------------- */
 var picker = document.getElementById('picker'), pickGrid = document.getElementById('pickGrid');
 function openPicker(){
   settle();
+  if (lockedKey()){ toast('Staying on ' + LOCKED.name + '. Staff: hold ⚙ to unlock.'); return; }
   pickGrid.innerHTML = '';
   pages.forEach(function(p, i){
     var b = document.createElement('button');
@@ -1539,6 +2202,12 @@ function openPicker(){
     });
     pickGrid.appendChild(b);
   });
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    var sc = document.createElement('button');
+    sc.className = 'pick scan'; sc.textContent = '📷 Scan a sticker';
+    sc.addEventListener('click', function(){ picker.classList.remove('open'); openScanner(); });
+    pickGrid.appendChild(sc);
+  }
   var c = document.createElement('button');
   c.className = 'pick close'; c.textContent = '✕ Close';
   c.addEventListener('click', function(){ picker.classList.remove('open'); });
@@ -1548,11 +2217,145 @@ function openPicker(){
 titleBtn.addEventListener('click', openPicker);
 picker.addEventListener('click', function(e){ if (e.target === picker) picker.classList.remove('open'); });
 
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('on'); }, 3200);
+}
+/* A link, sticker or shortcut turns to a page (false if it isn't on this phone, or the board is staying on another). */
+function goToPage(k){
+  var i = pageIndex(k), lk = lockedKey();
+  if (i === -1 || (lk && lk !== k)) return false;
+  if (pages[current].key !== k){
+    settle(); var dir = i > current ? 'next' : 'prev'; current = i; render(dir);
+    if (navigator.vibrate){ try { navigator.vibrate(28); } catch(e){} }
+  }
+  return true;
+}
+/* The app already open when a shortcut or sticker is used: Chrome hands the address over here
+   (manifest "launch_handler"), instead of starting the app again. */
+if (window.launchQueue && window.launchQueue.setConsumer){
+  window.launchQueue.setConsumer(function(p){
+    var k = p && p.targetURL && linkKey(p.targetURL);
+    if (!k || overlayOpen()) return;
+    if (!goToPage(k)) pendingLink = k;                     /* maybe a page made on this phone, still loading */
+  });
+}
+
+/* ============================================================
+   SCAN A QR STICKER (the page list → 📷 Scan a sticker)
+   The camera looks for a Talanoa sticker (Settings → Page stickers)
+   and turns to its page. Chrome's own barcode reader is used if the
+   phone has one, otherwise lib/jsQR.js, which is kept on the phone,
+   so it works with no internet. The camera stops as soon as it has
+   found one, on Close or Back, or after a minute.
+   ============================================================ */
+var scanView = document.getElementById('scanView'), scanVideo = document.getElementById('scanVideo'), scanMsg = document.getElementById('scanMsg');
+var scanStream = null, scanT = null, scanTries = 0;
+function loadScript(src){
+  return new Promise(function(ok, no){ var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+}
+function jsqrReader(){
+  return (window.jsQR ? Promise.resolve() : loadScript('lib/jsQR.js')).then(function(){
+    var cv = document.createElement('canvas'), cx = cv.getContext('2d', {willReadFrequently: true});
+    return function(v){
+      var w = v.videoWidth, h = v.videoHeight;
+      if (!w || !h) return Promise.resolve(null);
+      var s = Math.min(1, 640 / Math.max(w, h));
+      cv.width = Math.round(w * s); cv.height = Math.round(h * s);
+      cx.drawImage(v, 0, 0, cv.width, cv.height);
+      var r = window.jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, {inversionAttempts: 'dontInvert'});
+      return Promise.resolve(r ? r.data : null);
+    };
+  });
+}
+function qrReader(){
+  if (!window.BarcodeDetector || !BarcodeDetector.getSupportedFormats) return jsqrReader();
+  return BarcodeDetector.getSupportedFormats().then(function(f){
+    if (f.indexOf('qr_code') === -1) return jsqrReader();
+    var d = new BarcodeDetector({formats: ['qr_code']});
+    return function(v){ return d.detect(v).then(function(r){ return r.length ? r[0].rawValue : null; }); };
+  }, jsqrReader);
+}
+function openScanner(){
+  stopTalking();
+  scanMsg.textContent = 'Starting the camera…';
+  scanView.classList.add('open');
+  qrReader().then(function(read){
+    return navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}, audio: false}).then(function(stream){
+      if (!scanView.classList.contains('open')){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+      scanStream = stream; scanTries = 0;
+      scanVideo.srcObject = stream; scanVideo.play().catch(function(){});
+      scanMsg.textContent = 'Point the camera at a Talanoa sticker';
+      var until = Date.now() + 60000;
+      (function look(){
+        if (scanStream !== stream) return;
+        if (Date.now() > until){ closeScanner(); return; }
+        read(scanVideo).then(function(text){
+          if (scanStream !== stream) return;
+          scanTries++;
+          if (text){
+            var k = linkKey(text);
+            if (k && goToPage(k)){ closeScanner(); return; }
+            scanMsg.textContent = k ? 'That page isn’t on this phone.' : 'That isn’t a Talanoa sticker.';
+          }
+          scanT = setTimeout(look, 150);
+        }, function(){ scanT = setTimeout(look, 300); });
+      })();
+    }, function(){
+      scanMsg.textContent = 'The camera didn’t start. In Chrome: ⋮ → Settings → Site settings → Camera, and allow this site.';
+    });
+  }, function(){ scanMsg.textContent = 'The QR reader couldn’t start. Open Talanoa once with the internet on, then try again.'; });
+}
+function closeScanner(){
+  clearTimeout(scanT);
+  if (scanStream){ scanStream.getTracks().forEach(function(t){ t.stop(); }); scanStream = null; }
+  scanVideo.srcObject = null;
+  scanView.classList.remove('open');
+}
+document.getElementById('scanClose').addEventListener('click', closeScanner);
+document.addEventListener('visibilitychange', function(){ if (document.hidden && scanView.classList.contains('open')) closeScanner(); });
+
+/* ============================================================
+   NFC STICKERS (Settings → Page stickers; off unless chosen)
+   With "Read NFC stickers" on, touching the back of the phone to a
+   sticker Talanoa wrote opens its page, while Talanoa is open. (When
+   it's closed, Android itself opens the sticker's address.) Chrome
+   on Android only: Settings shows this only where the phone has it.
+   ============================================================ */
+var NFC_OK = 'NDEFReader' in window, NFC_ON = store('tt2_nfc') === '1', nfcScan = null, nfcWriting = null;
+function nfcStat(t){ document.getElementById('nfcStat').textContent = t; }
+function startNfc(){
+  if (!NFC_OK) return Promise.reject(new Error('no NFC'));
+  if (nfcScan) return Promise.resolve();
+  var ac = new AbortController(), r = new NDEFReader();
+  return r.scan({signal: ac.signal}).then(function(){
+    nfcScan = ac;
+    r.onreading = function(e){
+      if (nfcWriting) return;
+      var url = null;
+      (e.message && e.message.records || []).forEach(function(rec){
+        if (!url && (rec.recordType === 'url' || rec.recordType === 'absolute-url')){ try { url = new TextDecoder().decode(rec.data); } catch(x){} }
+      });
+      var k = url && linkKey(url), lk = lockedKey();
+      if (!k || overlayOpen()) return;
+      if (lk && lk !== k){ toast('Staying on ' + LOCKED.name + '.'); return; }
+      if (!goToPage(k)) toast('That page isn’t on this phone.');
+    };
+  });
+}
+function stopNfc(){ if (nfcScan){ try { nfcScan.abort(); } catch(e){} nfcScan = null; } }
+if (NFC_ON && NFC_OK && navigator.permissions){
+  navigator.permissions.query({name: 'nfc'}).then(function(p){ if (p.state === 'granted') startNfc().catch(function(){}); }, function(){});
+}
+
 render('');
 fitLabels(coreEl);
+markWow();                                 /* the word of the week, if the top row has it */
+document.body.classList.toggle('scan', SCAN);
 preloadCore();                             /* the top row's clips, ready for the first tap */
 loadAbcList();                             /* the ABC page's long word list for this voice */
-window.addEventListener('resize', function(){ fitLabels(coreEl); if (gridEl) fitLabels(gridEl); });
+window.addEventListener('resize', function(){ fitLabels(coreEl); if (gridEl) fitLabels(gridEl); if (SCAN) scanStart(); });
 var STRONG = store('tt2_strong') === '1', BIG = store('tt2_big') !== '0', ROOM = store('tt2_room') === '1';
 document.body.classList.toggle('strong', STRONG);
 document.body.classList.toggle('room', ROOM);
@@ -1567,16 +2370,19 @@ gear.addEventListener('touchcancel', endHold);
 gear.addEventListener('mousedown', startHold);
 gear.addEventListener('mouseup', endHold);
 gear.addEventListener('mouseleave', endHold);
-document.getElementById('closePanel').addEventListener('click', function(){ panel.classList.remove('open'); });
+document.getElementById('closePanel').addEventListener('click', function(){ panel.classList.remove('open'); if (SCAN) scanStart(); });
 panel.addEventListener('click', function(e){ if (e.target === panel) panel.classList.remove('open'); });
 
 function openSettings(){
   settle(); buildVoiceList(); buildPageList(); refreshOffline(); showVersion(); showFxLevel();
   calmBox.checked = CALM; bigBox.checked = BIG; strongBox.checked = STRONG; countBox.checked = countOn; roomBox.checked = ROOM;
   sentBox.checked = SENT; suggestBox.checked = SUGGEST; numbersBox.checked = NUMBERS; recentBox.checked = RECENT; sixBox.checked = SIX;
+  loudBox.checked = LOUD; awakeBox.checked = AWAKE; logCheck.checked = LOG_ON; healthBox.checked = HEALTH;
+  showScanOpts();
+  showTools(); showNfc(); showVisits();
   findBox.value = ''; buildFind('');
   showScreen();
-  buildCounts(); showOwnStat();
+  buildCounts(); showOwnStat(); buildLog(); showMineList();
   panel.classList.add('open');
 }
 var calmBox = document.getElementById('calmOn'), bigBox = document.getElementById('bigOn');
@@ -1614,6 +2420,176 @@ sixBox.addEventListener('change', function(){
   pages.forEach(function(q, i){ if (idx === -1 && q.key === here) idx = i; });   /* the first screen of the same page */
   current = idx === -1 ? 0 : idx;
   render('');
+});
+
+/* Loud voice, and keeping the screen on (both off unless chosen) */
+var loudBox = document.getElementById('loudOn'), awakeBox = document.getElementById('awakeOn');
+var logCheck = document.getElementById('logOn'), healthBox = document.getElementById('healthOn');
+logCheck.addEventListener('change', function(){ LOG_ON = logCheck.checked; store('tt2_log', LOG_ON ? '1' : '0'); if (!LOG_ON) store(SAIDLOG, ''); buildLog(); });
+healthBox.addEventListener('change', function(){ HEALTH = healthBox.checked; store('tt2_healthchime', HEALTH ? '1' : '0'); });
+loudBox.addEventListener('change', function(){ LOUD = loudBox.checked; store('tt2_loud', LOUD ? '1' : '0'); sample(); });
+awakeBox.addEventListener('change', function(){
+  AWAKE = awakeBox.checked; store('tt2_awake', AWAKE ? '1' : '0');
+  if (AWAKE) keepAwake(AWAKE_FOR); else { awakeUntil = 0; letSleep(); }
+});
+
+/* Scanning (off unless chosen) */
+var scanBox = document.getElementById('scanOn'), scanSpeedEl = document.getElementById('scanSpeed');
+function showScanOpts(){
+  scanBox.checked = SCAN; document.getElementById('scanOpts').hidden = !SCAN;
+  scanSpeedEl.value = SCAN_MS / 1000; document.getElementById('scanSpeedVal').textContent = (SCAN_MS / 1000) + ' seconds';
+  document.getElementById('scanRows').checked = SCAN_ROWS; document.getElementById('scanSay').checked = SCAN_SAY;
+}
+scanBox.addEventListener('change', function(){ store('tt2_scan', scanBox.checked ? '1' : '0'); setScan(scanBox.checked); showScanOpts(); });
+scanSpeedEl.addEventListener('input', function(){ SCAN_MS = parseFloat(scanSpeedEl.value) * 1000; store('tt2_scan_speed', String(SCAN_MS / 1000)); showScanOpts(); });
+document.getElementById('scanRows').addEventListener('change', function(e){ SCAN_ROWS = e.target.checked; store('tt2_scan_rows', SCAN_ROWS ? '1' : '0'); });
+document.getElementById('scanSay').addEventListener('change', function(e){ SCAN_SAY = e.target.checked; store('tt2_scan_say', SCAN_SAY ? '1' : '0'); });
+
+/* The staff tools along the top of Settings */
+function showTools(){
+  var tm = document.getElementById('toolTimer'), nx = nextUp();
+  tm.classList.toggle('on', !!TIMER && !TIMER.done);
+  document.getElementById('toolTimerTxt').textContent = TIMER && !TIMER.done ? 'Wait timer: ' + Math.ceil(timerLeft() / 60000) + ' min left' : 'Wait timer';
+  document.getElementById('toolNext').classList.toggle('on', !!nx);
+  document.getElementById('toolNextTxt').textContent = nx ? BY_KEY[nx.first].label + ' ➜ ' + BY_KEY[nx.then].label : 'First, then';
+  document.getElementById('toolModel').classList.toggle('on', MODEL);
+  document.getElementById('toolModelTxt').textContent = MODEL ? 'Modelling is on' : 'Modelling';
+  var lk = lockedKey(), b = document.getElementById('toolLock');
+  b.classList.toggle('on', !!lk);
+  b.firstChild.textContent = lk ? '🔓' : '🔒';
+  document.getElementById('toolLockTxt').textContent = lk ? 'Unlock (staying on ' + LOCKED.name + ')' : 'Stay on ' + pages[current].name.replace(/ \d+$/, '');
+}
+document.getElementById('toolLock').addEventListener('click', function(){
+  if (lockedKey()){ unlockPage(); showTools(); toast('Unlocked: the pages turn as usual.'); return; }
+  lockPage();
+  panel.classList.remove('open');
+  toast('Staying on ' + LOCKED.name + '. To unlock: hold ⚙, then 🔓.');
+});
+
+/* ⏳ The wait timer: how long, and (if you like) the picture for what comes after */
+var timerSheet = document.getElementById('timerSheet'), timerThen = null;
+function showTimerSheet(){
+  var mins = document.getElementById('timerMins'); mins.innerHTML = '';
+  [1, 2, 3, 5, 10, 15, 20, 30].forEach(function(m){
+    var b = el('button', '', m + ' min');
+    b.addEventListener('click', function(){ timerSheet.classList.remove('open'); panel.classList.remove('open'); startTimer(m, timerThen); });
+    mins.appendChild(b);
+  });
+  var run = TIMER && !TIMER.done;
+  document.getElementById('timerHint').textContent = run ? 'A timer is running: ' + Math.ceil(timerLeft() / 60000) + ' min left. Choose a time to start again, or stop it.'
+                                                         : 'A pie that shrinks while he waits, and a chime at the end. Choose how long:';
+  document.getElementById('timerStop').hidden = !run;
+  document.getElementById('timerThen').textContent = timerThen && BY_KEY[timerThen] ? BY_KEY[timerThen].label : 'nothing chosen';
+  document.getElementById('timerThenOff').hidden = !timerThen;
+}
+document.getElementById('toolTimer').addEventListener('click', function(){ timerThen = TIMER && !TIMER.done ? TIMER.then : null; showTimerSheet(); timerSheet.classList.add('open'); });
+document.getElementById('timerThenPick').addEventListener('click', function(){
+  pickTiles({max: 1, min: 1, title: 'After the wait', hint: 'Tap the picture for what comes next, then Done.', done: function(keys){ timerThen = keys[0]; showTimerSheet(); }});
+});
+document.getElementById('timerThenOff').addEventListener('click', function(){ timerThen = null; showTimerSheet(); });
+document.getElementById('timerStop').addEventListener('click', function(){ stopTimer(); showTimerSheet(); showTools(); });
+document.getElementById('timerDone').addEventListener('click', function(){ timerSheet.classList.remove('open'); showTools(); });
+document.getElementById('toolModel').addEventListener('click', function(){ showModelSheet(); modelSheet.classList.add('open'); });
+/* ➡️ First, then: two pictures, in order */
+document.getElementById('toolNext').addEventListener('click', function(){
+  pickTiles({max: 2, min: 2, title: 'First, then', hint: 'Tap what comes first, then what comes after it, then Done.', clear: !!nextUp(),
+             done: function(keys){
+               if (!keys){ setNextUp(null); showTools(); toast('First, then is cleared.'); return; }
+               setNextUp(keys[0], keys[1]); panel.classList.remove('open'); openCard('next');
+             }});
+});
+
+/* Visits (the Time page's When is Dad coming? / When is Mom coming?) */
+function showVisits(){
+  ['dad', 'mom'].forEach(function(who){
+    var row = document.getElementById('visit-' + who), v = readVisit(who) || {}, nx = nextVisit(who);
+    row.querySelector('input[type=date]').value = v.date || '';
+    row.querySelector('input[type=checkbox]').checked = !!v.weekly;
+    var n = nx ? daysTo(nx) : -1;
+    row.querySelector('small').textContent = nx ? 'Next visit: ' + longDate(nx) + (n === 0 ? ' (today)' : n === 1 ? ' (tomorrow)' : ' (in ' + n + ' days)') : v.date ? 'That date has passed.' : 'No date set.';
+  });
+}
+['dad', 'mom'].forEach(function(who){
+  var row = document.getElementById('visit-' + who), date = row.querySelector('input[type=date]'), weekly = row.querySelector('input[type=checkbox]');
+  function save(){ store('tt2_visit_' + who, date.value ? JSON.stringify({date: date.value, weekly: weekly.checked}) : ''); showVisits(); }
+  date.addEventListener('change', save); weekly.addEventListener('change', save);
+  row.querySelector('button').addEventListener('click', function(){ date.value = ''; weekly.checked = false; save(); });
+});
+
+/* ---- choosing pictures for the staff tools (the wait timer's "then", First / then, Choose) ---- */
+var tilePick = document.getElementById('tilePick'), tp = null;
+function pickTiles(opts){
+  tp = {max: opts.max, min: opts.min, done: opts.done, picked: [], at: tp ? tp.at : 0};
+  document.getElementById('tpTitle').textContent = opts.title;
+  document.getElementById('tpHint').textContent = opts.hint;
+  document.getElementById('tpCancel').textContent = opts.clear ? 'Clear it' : 'Cancel';
+  tp.clear = !!opts.clear;
+  buildPicker(); tilePick.classList.add('open');
+}
+function buildPicker(){
+  var lists = chooserLists(), chips = document.getElementById('tpPages'), grid = document.getElementById('tpGrid');
+  if (tp.at >= lists.length) tp.at = 0;
+  chips.innerHTML = '';
+  lists.forEach(function(p, i){
+    var b = el('button', i === tp.at ? 'on' : '', (p.icon ? p.icon + ' ' : '') + p.name);
+    b.addEventListener('click', function(){ tp.at = i; buildPicker(); });
+    chips.appendChild(b);
+  });
+  var page = lists[tp.at];
+  grid.innerHTML = ''; paint(grid, page.color);
+  page.tiles.forEach(function(t){
+    if (blank(t)){ grid.appendChild(el('div', 'slot')); return; }
+    var b = makeTile(t); b.classList.remove('lit');
+    if (tp.picked.indexOf(t._key) !== -1) b.classList.add('picked');
+    b.addEventListener('click', function(){
+      var at = tp.picked.indexOf(t._key);
+      if (at !== -1) tp.picked.splice(at, 1);
+      else { if (tp.picked.length >= tp.max) tp.picked.shift(); tp.picked.push(t._key); }
+      buildPicker();
+    });
+    grid.appendChild(b);
+  });
+  fitLabels(grid);
+  var tray = document.getElementById('tpTray'); tray.innerHTML = '';
+  tp.picked.forEach(function(k, i){ tray.appendChild(el('span', '', (tp.max > 1 ? (i + 1) + '. ' : '') + BY_KEY[k].label)); });
+  document.getElementById('tpOk').disabled = tp.picked.length < tp.min;
+}
+document.getElementById('tpOk').addEventListener('click', function(){ tilePick.classList.remove('open'); var t = tp; t.done(t.picked.slice()); });
+document.getElementById('tpCancel').addEventListener('click', function(){ tilePick.classList.remove('open'); if (tp.clear) tp.done(null); });
+
+/* Page stickers: NFC (only on phones that have it) */
+var nfcBox = document.getElementById('nfcOn'), nfcPageSel = document.getElementById('nfcPage');
+function showNfc(){
+  document.getElementById('nfcBox').hidden = !NFC_OK;
+  if (!NFC_OK) return;
+  nfcBox.checked = NFC_ON;
+  var was = nfcPageSel.value, seen = {};
+  nfcPageSel.innerHTML = '';
+  allPages.forEach(function(p){
+    if (seen[p.key]) return; seen[p.key] = 1;
+    var o = document.createElement('option'); o.value = p.key; o.textContent = p.name.replace(/ \d+$/, ''); nfcPageSel.appendChild(o);
+  });
+  nfcPageSel.value = seen[was] ? was : pages[current].key;
+}
+nfcBox.addEventListener('change', function(){
+  NFC_ON = nfcBox.checked; store('tt2_nfc', NFC_ON ? '1' : '0');
+  if (!NFC_ON){ stopNfc(); nfcStat(''); return; }
+  nfcStat('Starting…');
+  startNfc().then(function(){ nfcStat('✓ Touch the back of the phone to a sticker to open its page.'); },
+    function(){ NFC_ON = false; store('tt2_nfc', '0'); nfcBox.checked = false;
+                nfcStat('NFC didn’t start. Check that NFC is on (pull down from the top of the screen), and allow it for this site.'); });
+});
+document.getElementById('nfcWrite').addEventListener('click', function(){
+  var btn = this;
+  if (nfcWriting){ nfcWriting.abort(); return; }
+  var k = nfcPageSel.value, name = nfcPageSel.options[nfcPageSel.selectedIndex].textContent, ac = new AbortController();
+  nfcWriting = ac; btn.textContent = 'Stop';
+  nfcStat('Hold a sticker against the back of the phone…');
+  new NDEFReader().write({records: [{recordType: 'url', data: linkFor(k)}]}, {signal: ac.signal}).then(function(){
+    nfcStat('✓ Done: this sticker opens ' + name + '.');
+  }, function(err){
+    nfcStat(err && err.name === 'AbortError' ? 'Stopped.' : 'It didn’t write. Hold the sticker still against the back of the phone and try again (some stickers are locked and can’t be written).');
+  }).then(function(){ nfcWriting = null; btn.textContent = 'Write a sticker'; });
 });
 
 /* Find a word: where is a picture? Tapping a result goes to its page and outlines it (nothing is said). */
@@ -1786,6 +2762,448 @@ function showRecents(text){
 window.addEventListener('resize', function(){ if (showView.classList.contains('open')) fitShow(); });
 
 /* ============================================================
+   THE TIME PAGE: ANSWER CARDS ("shows" in library.js)
+   A question on the Time page is said as always (it's him asking),
+   then a card shows the answer: the time, today's date, the days
+   until a visit (Settings → Visits), the wait timer, or First /
+   Then. 🔊 on the card says the answer in the board's voice: phrases
+   recorded for it ("The time is", "My dad is coming on Saturday":
+   time_phrases in tools/build.py) and, in between, the ABC page's
+   checked words (numbers, months, days of the month, "o'clock":
+   TIME_WORDS there). Close or Back goes back to the board. The
+   time, date and visit cards close by themselves after a minute,
+   like the big words; the timer and First / Then stay until closed.
+   With nothing to show (no visit set, no timer running), the
+   question is just said, for staff to answer.
+   ============================================================ */
+var infoView = document.getElementById('infoView'), infoBody = document.getElementById('infoBody');
+var infoKind = '', infoTick = null, infoCloseT = null;
+var DAY_NAMES = 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.split(' ');
+var MONTH_NAMES = 'January February March April May June July August September October November December'.split(' ');
+var ORDINAL_WORDS = ('first second third fourth fifth sixth seventh eighth ninth tenth eleventh twelfth thirteenth fourteenth ' +
+  'fifteenth sixteenth seventeenth eighteenth nineteenth twentieth twenty-first twenty-second twenty-third twenty-fourth ' +
+  'twenty-fifth twenty-sixth twenty-seventh twenty-eighth twenty-ninth thirtieth thirty-first').split(' ');
+var HOUR_WORDS = 'twelve one two three four five six seven eight nine ten eleven'.split(' ');
+function phraseClip(text){ var set = voiceId !== 'device' && ASSETS.clips[voiceId]; return set && set[text] || null; }
+/* Say pieces one after another: a recorded phrase ("The time is"), a number (15: the ABC page's "fifteen"),
+   or {src: a clip} (word(): one of the ABC page's words). If the voice is missing any of them, the phone's
+   own voice says the whole thing. */
+function word(w){ return {src: abcClip('words', w.toLowerCase().replace(/[^a-z]/g, ''))}; }
+function sayPieces(pieces, text){
+  var parts = [];
+  pieces.forEach(function(p, i){
+    var srcs = typeof p === 'number' ? numberWords(p).map(function(w){ return abcClip('words', w); }) : p && typeof p === 'object' ? [p.src] : [phraseClip(p)];
+    srcs.forEach(function(src, k){ parts.push({src: src, gap: k ? 90 : i ? 160 : 0}); });
+  });
+  stopTalking();
+  if (!parts.length || parts.some(function(x){ return !x.src; })){ speakDevice(text); return; }
+  abcQueue = parts.map(function(x){ return x.src; });
+  if (LOUD && sayTypedLoud(parts, text)) return;
+  sayTypedPlain(parts, text);
+}
+function dayStart(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function daysTo(d){ return Math.round((dayStart(d) - dayStart(new Date())) / 864e5); }
+function partOfDay(h){ return h >= 5 && h < 12 ? 'in the morning' : h >= 12 && h < 17 ? 'in the afternoon' : h >= 17 && h < 21 ? 'in the evening' : 'at night'; }
+function timeAnswer(d){                       /* "The time is three fifteen in the afternoon" */
+  var h = d.getHours(), m = d.getMinutes(), h12 = h % 12 || 12, part = partOfDay(h);
+  var pieces = ['The time is', h12].concat(m === 0 ? [word("o'clock")] : m < 10 ? [word('oh'), m] : [m], [part]);
+  return {pieces: pieces, text: 'The time is ' + HOUR_WORDS[h % 12] + ' ' + (m === 0 ? "o'clock" : (m < 10 ? 'oh ' : '') + numberWords(m).join(' ')) + ' ' + part};
+}
+function dateAnswer(d){                       /* "Today is Saturday, October eleventh" */
+  var day = 'Today is ' + DAY_NAMES[d.getDay()], mo = MONTH_NAMES[d.getMonth()], nth = ORDINAL_WORDS[d.getDate() - 1];
+  return {pieces: [day, word(mo), word(nth)], text: day + ', ' + mo + ' ' + nth};
+}
+
+/* ---- visits (Settings → Visits): a date, and "every week" if it repeats ---- */
+function readVisit(who){ try { return JSON.parse(store('tt2_visit_' + who) || 'null'); } catch(e){ return null; } }
+function nextVisit(who){
+  var v = readVisit(who);
+  if (!v || !/^\d{4}-\d\d-\d\d$/.test(v.date || '')) return null;
+  var d = new Date(v.date + 'T00:00'), today = dayStart(new Date());
+  if (v.weekly) while (d < today) d.setDate(d.getDate() + 7);
+  return d < today ? null : d;
+}
+function visitAnswer(who, d){                 /* "My dad is coming on Saturday", "nine more days until Dad comes" */
+  var n = daysTo(d), my = 'My ' + who + ' is coming ';
+  var p = n === 0 ? [my + 'today'] : n === 1 ? [my + 'tomorrow'] : n < 7 ? [my + 'on ' + DAY_NAMES[d.getDay()]] : [n, 'more days until ' + (who === 'dad' ? 'Dad' : 'Mom') + ' comes'];
+  return {pieces: p, text: n < 7 ? p[0] : numberWords(n).join(' ') + ' ' + p[1]};
+}
+function longDate(d){ return DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate(); }
+
+/* ---- the wait timer (Settings → ⏳): {end, total, then: a picture's key, done} ---- */
+var TIMER = null, timerT = null;
+try { TIMER = JSON.parse(store('tt2_timer') || 'null'); } catch(e){}
+if (TIMER && Date.now() > TIMER.end + 30 * 60000){ TIMER = null; store('tt2_timer', ''); }   /* ended long ago */
+function timerLeft(){ return TIMER ? Math.max(0, TIMER.end - Date.now()) : 0; }
+function timerAnswer(){
+  var left = timerLeft(), s = Math.ceil(left / 1000), m = Math.ceil(s / 60);
+  if (!left) return {pieces: ['All done waiting!'], text: 'All done waiting!'};
+  if (s <= 60) return {pieces: ['Almost done waiting'], text: 'Almost done waiting'};
+  return {pieces: [m, 'more minutes'], text: numberWords(m).join(' ') + ' more minutes'};
+}
+function saveTimer(){ store('tt2_timer', TIMER ? JSON.stringify(TIMER) : ''); }
+function startTimer(mins, then){
+  TIMER = {end: Date.now() + mins * 60000, total: mins * 60000, then: then || null, done: false};
+  saveTimer(); armTimer(); keepAwake(mins * 60000 + 30000);
+  showTimerChip(); openCard('timer');
+}
+function armTimer(){
+  clearTimeout(timerT);
+  if (!TIMER || TIMER.done) return;
+  var left = TIMER.end - Date.now();
+  if (left <= 0){ TIMER.done = true; saveTimer(); return; }      /* ended while Talanoa was closed: no chime now */
+  timerT = setTimeout(timerDone, left);
+}
+function timerDone(){
+  if (!TIMER || TIMER.done) return;
+  TIMER.done = true; saveTimer();
+  if (!document.hidden){
+    chimeFirst(function(){ sayPieces(['All done waiting!'], 'All done waiting!'); });
+    if (navigator.vibrate){ try { navigator.vibrate([200, 100, 200]); } catch(e){} }
+  }
+  if (!overlayOpen() || infoKind === 'timer') openCard('timer');
+  showTimerChip();
+}
+function stopTimer(){
+  TIMER = null; saveTimer(); clearTimeout(timerT);
+  if (infoKind === 'timer') closeCard();
+  showTimerChip();
+}
+/* A pie that shrinks, from 12 o'clock round, as on a Time Timer. */
+function pieSvg(frac, cls){
+  var a = Math.max(0, Math.min(1, frac)) * 2 * Math.PI, x = 100 + 92 * Math.sin(a), y = 100 - 92 * Math.cos(a);
+  var red = frac >= 0.9995 ? '<circle cx="100" cy="100" r="92" fill="#E53935"/>'
+          : frac <= 0 ? '' : '<path d="M100 100 L100 8 A92 92 0 ' + (a > Math.PI ? 1 : 0) + ' 1 ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' Z" fill="#E53935"/>';
+  return '<svg viewBox="0 0 200 200" class="' + cls + '"><circle cx="100" cy="100" r="96" fill="#fff" stroke="#888" stroke-width="6"/>' + red + '</svg>';
+}
+var timerChip = document.getElementById('timerChip');
+function showTimerChip(){
+  timerChip.hidden = !TIMER;
+  if (!TIMER) return;
+  timerChip.innerHTML = TIMER.done ? '<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#3F8A34"/><path d="M55 104 L88 136 L148 70" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                                   : pieSvg(timerLeft() / TIMER.total, '');
+}
+timerChip.addEventListener('click', function(e){ e.stopPropagation(); openCard('timer'); });
+setInterval(function(){ if (TIMER && !TIMER.done) showTimerChip(); }, 5000);
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden || !TIMER) return;
+  if (!TIMER.done && timerLeft() <= 0) timerDone(); else if (!TIMER.done) keepAwake(timerLeft() + 30000);
+});
+armTimer(); showTimerChip();
+
+/* ---- First, then (Settings → ➡️): {first, then: pictures' keys, done, at}; it's gone after 12 hours ---- */
+var NEXTUP = null;
+try { NEXTUP = JSON.parse(store('tt2_nextup') || 'null'); } catch(e){}
+function nextUp(){
+  if (NEXTUP && Date.now() - NEXTUP.at > 12 * 3600000){ NEXTUP = null; store('tt2_nextup', ''); }
+  return NEXTUP && BY_KEY[NEXTUP.first] && BY_KEY[NEXTUP.then] ? NEXTUP : null;
+}
+function setNextUp(first, then){ NEXTUP = first ? {first: first, then: then, done: false, at: Date.now()} : null; store('tt2_nextup', NEXTUP ? JSON.stringify(NEXTUP) : ''); }
+/* A picture's words, one ABC recording each (every board word has one in every voice). */
+function labelPieces(it){
+  return it.label.toLowerCase().split(/[^a-z']+/).filter(Boolean).map(function(w){ return {src: abcClip('words', w.replace(/[^a-z]/g, ''))}; });
+}
+function nextAnswer(n){
+  var a = BY_KEY[n.first], b = BY_KEY[n.then];
+  return {pieces: [word('first')].concat(labelPieces(a), [word('then')], labelPieces(b)), text: 'First, ' + a.label + '. Then, ' + b.label + '.'};
+}
+function pageColorOf(it){
+  if (it.color) return it.color;
+  var c = null;
+  boardPages().forEach(function(p){ if (!c && (p.tiles || []).indexOf(it) !== -1) c = p.color; });
+  return c || '#3C6E9F';
+}
+function cardTile(it){
+  var box = document.createElement('div'), t = makeTile(it);
+  box.className = 'ctile';
+  t.classList.remove('lit'); paint(box, pageColorOf(it)); box.appendChild(t);
+  return box;
+}
+
+/* ---- drawing a card. Returns false if there's nothing to show. ---- */
+function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function clockSvg(d){
+  var h = d.getHours() % 12, m = d.getMinutes(), s = d.getSeconds(), out = '';
+  for (var i = 1; i <= 12; i++){
+    var a = i * Math.PI / 6;
+    out += '<text x="' + (100 + 72 * Math.sin(a)).toFixed(1) + '" y="' + (100 - 72 * Math.cos(a) + 7).toFixed(1) + '" font-size="20" font-weight="800" text-anchor="middle" fill="#333">' + i + '</text>';
+  }
+  function hand(deg, len, w, col){ var r = deg * Math.PI / 180; return '<line x1="100" y1="100" x2="' + (100 + len * Math.sin(r)).toFixed(1) + '" y2="' + (100 - len * Math.cos(r)).toFixed(1) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round"/>'; }
+  return '<svg viewBox="0 0 200 200" class="clockface" role="img" aria-label="clock"><circle cx="100" cy="100" r="94" fill="#fff" stroke="#00838F" stroke-width="8"/>' + out +
+         hand((h + m / 60) * 30, 46, 10, '#222') + hand((m + s / 60) * 6, 66, 6, '#222') + '<circle cx="100" cy="100" r="8" fill="#222"/></svg>';
+}
+function drawCard(kind, tick){
+  var now = new Date();
+  if (kind === 'clock'){
+    var h12 = now.getHours() % 12 || 12, mm = ('0' + now.getMinutes()).slice(-2);
+    if (tick && infoBody.querySelector('.clockface')){
+      infoBody.querySelector('.clockface').outerHTML = clockSvg(now);
+      infoBody.querySelector('.ib1').textContent = h12 + ':' + mm;
+      infoBody.querySelector('.ib3').textContent = DAY_NAMES[now.getDay()] + ' ' + partOfDay(now.getHours()).replace(/^in the |^at /, '');
+      return true;
+    }
+    infoBody.innerHTML = clockSvg(now);
+    infoBody.appendChild(el('div', 'ib1', h12 + ':' + mm));
+    infoBody.appendChild(el('div', 'ib3', DAY_NAMES[now.getDay()] + ' ' + partOfDay(now.getHours()).replace(/^in the |^at /, '')));
+    return true;
+  }
+  if (tick) return true;                                   /* the others are redrawn by their own updates */
+  infoBody.innerHTML = '';
+  if (kind === 'date'){
+    infoBody.appendChild(el('div', 'ib3', 'Today is'));
+    infoBody.appendChild(el('div', 'ib1', DAY_NAMES[now.getDay()]));
+    infoBody.appendChild(el('div', 'ib2', MONTH_NAMES[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear()));
+    var row = el('div', 'weekrow'), first = dayStart(now), dad = nextVisit('dad'), mom = nextVisit('mom');
+    first.setDate(first.getDate() - now.getDay());
+    for (var i = 0; i < 7; i++){
+      var d = new Date(first); d.setDate(first.getDate() + i);
+      var c = el('div', d.getDay() === now.getDay() ? 'today' : '', DAY_NAMES[i].slice(0, 3));
+      [dad, mom].forEach(function(v){ if (v && +dayStart(v) === +d && i !== now.getDay()) c.classList.add('visit'); });
+      row.appendChild(c);
+    }
+    infoBody.appendChild(row);
+    return true;
+  }
+  if (/^visit-/.test(kind)){
+    var who = kind.slice(6), v = nextVisit(who);
+    if (!v) return false;
+    var n = daysTo(v), W = who === 'dad' ? 'Dad' : 'Mom';
+    infoBody.appendChild(el('div', 'ib2', W + ' is coming'));
+    infoBody.appendChild(el('div', 'ib1', n === 0 ? 'Today!' : n === 1 ? 'Tomorrow' : n < 7 ? 'on ' + DAY_NAMES[v.getDay()] : 'in ' + n + ' days'));
+    infoBody.appendChild(el('div', 'ib3', longDate(v)));
+    if (n > 0 && n <= 14){                                  /* the sleeps until then */
+      var sl = el('div', 'sleeps');
+      for (var k = 0; k < n; k++) sl.appendChild(el('span', '', '🌙'));
+      infoBody.appendChild(sl);
+      infoBody.appendChild(el('div', 'ib3', n === 1 ? '1 more sleep' : n + ' more sleeps'));
+    }
+    return true;
+  }
+  if (kind === 'timer'){
+    if (!TIMER) return false;
+    drawTimer();
+    return true;
+  }
+  if (kind === 'choose'){
+    var its = CHOICES.filter(function(k){ return BY_KEY[k]; });
+    if (its.length < 2) return false;
+    var row = el('div', 'chooserow' + (its.length === 2 ? ' n2' : ''));
+    its.forEach(function(k){ row.appendChild(cardTile(BY_KEY[k])); });
+    infoBody.appendChild(row);
+    return true;
+  }
+  if (kind === 'next'){
+    var nx = nextUp();
+    if (!nx) return false;
+    var ft = el('div', 'ftrow');
+    [['First', nx.first], ['Then', nx.then]].forEach(function(x, j){
+      if (j) ft.appendChild(el('div', 'arrowto', '➜'));
+      var f = el('div', 'ftile' + (j === 0 && nx.done ? ' done' : ''));
+      f.appendChild(el('b', '', x[0])); f.appendChild(cardTile(BY_KEY[x[1]]));
+      ft.appendChild(f);
+    });
+    infoBody.appendChild(ft);
+    var b = document.getElementById('infoDone');                /* under the card, not in it: a tap in it goes to the pictures */
+    b.hidden = !!nx.done; b.textContent = '✓ ' + BY_KEY[nx.first].label + ' is done';
+    return true;
+  }
+  return false;
+}
+function drawTimer(){
+  var left = timerLeft(), done = TIMER.done || !left, then = TIMER.then && BY_KEY[TIMER.then];
+  var s = Math.ceil(left / 1000), m = Math.ceil(s / 60), txt = done ? 'All done!' : s >= 60 ? (m === 1 ? '1 minute' : m + ' minutes') : s + ' seconds';
+  var pie = infoBody.querySelector('.pie');
+  if (pie && infoBody._done === done){ pie.outerHTML = pieSvg(left / TIMER.total, 'pie'); infoBody.querySelector('.ib1').textContent = txt; return; }
+  infoBody.innerHTML = ''; infoBody._done = done;
+  if (!done) infoBody.appendChild(el('div', 'ib3', 'Wait'));
+  var box = el('div'); box.innerHTML = pieSvg(done ? 0 : left / TIMER.total, 'pie');
+  if (!done) infoBody.appendChild(box.firstChild);
+  infoBody.appendChild(el('div', 'ib1', txt));
+  if (then){ infoBody.appendChild(el('div', 'ib3', done ? 'Now:' : 'Then:')); infoBody.appendChild(cardTile(then)); }
+}
+function openCard(kind){
+  document.getElementById('infoDone').hidden = true;
+  if (!drawCard(kind)) return false;
+  infoKind = kind;
+  infoView.style.borderColor = kind === 'timer' ? '#E53935' : kind === 'choose' ? '#3C6E9F' : '#00838F';
+  infoView.classList.add('open');
+  fitCard();
+  clearInterval(infoTick);
+  infoTick = setInterval(function(){
+    if (!infoView.classList.contains('open')) return;
+    if (infoKind === 'timer' && TIMER) drawTimer(); else drawCard(infoKind, true);
+  }, 1000);
+  clearTimeout(infoCloseT);
+  if (kind === 'clock' || kind === 'date' || /^visit-/.test(kind)) infoCloseT = setTimeout(closeCard, 60000);
+  return true;
+}
+function closeCard(){
+  infoView.classList.remove('open'); clearInterval(infoTick); clearTimeout(infoCloseT);
+  if (infoKind === 'timer' && TIMER && TIMER.done) stopTimer();     /* seen: the finished timer goes */
+  infoKind = '';
+}
+function cardAnswer(){
+  var now = new Date();
+  if (infoKind === 'clock') return timeAnswer(now);
+  if (infoKind === 'date') return dateAnswer(now);
+  if (/^visit-/.test(infoKind)){ var v = nextVisit(infoKind.slice(6)); return v && visitAnswer(infoKind.slice(6), v); }
+  if (infoKind === 'timer' && TIMER) return timerAnswer();
+  if (infoKind === 'next' && nextUp()) return nextAnswer(NEXTUP);
+  if (infoKind === 'choose' && CHOICES.length) return chooseAnswer();
+  return null;
+}
+document.getElementById('infoSay').addEventListener('click', function(){
+  var a = cardAnswer(); if (!a) return;
+  sayPieces(a.pieces, a.text);
+  if (infoCloseT){ clearTimeout(infoCloseT); infoCloseT = setTimeout(closeCard, 60000); }
+});
+document.getElementById('infoClose').addEventListener('click', closeCard);
+document.getElementById('infoDone').addEventListener('click', function(){
+  if (!nextUp()) return;
+  NEXTUP.done = true; store('tt2_nextup', JSON.stringify(NEXTUP)); drawCard('next'); fitCard();
+});
+/* The big words as big as fit across the card. */
+function fitCard(){
+  var w = infoBody.clientWidth - 28, bs = infoBody.querySelectorAll('.ib1');
+  for (var i = 0; i < bs.length; i++){
+    var b = bs[i], size; b.style.fontSize = '';
+    size = parseFloat(getComputedStyle(b).fontSize);
+    while (b.scrollWidth > w && size > 20){ size -= 2; b.style.fontSize = size + 'px'; }
+  }
+}
+listenForTaps(infoBody, false);                         /* a picture on a card talks like one on the board */
+
+/* ============================================================
+   MODELLING (Settings → 🧑‍🏫, for staff)
+   Staff use the board themselves while they talk with him ("aided
+   language input": the way AAC is taught). While it's on, taps are
+   said as always but not counted, not added to today's list or the
+   word suggestions, and the brown bar turns purple so everyone can
+   see it's on. 👆 then a picture makes that picture glow for a few
+   seconds without saying it: a hint, for him to tap it himself. ✕,
+   or 10 minutes without a tap, switches it off.
+   Word of the week: one picture gets a small gold star on the board
+   for 7 days, so everyone remembers to use and show it.
+   ============================================================ */
+var MODEL = false, modelLast = 0, hintArmed = false, MODEL_IDLE = 10 * 60000;
+var modelSheet = document.getElementById('modelSheet');
+function setModelling(on){
+  MODEL = on; modelLast = Date.now(); hintArmed = false;
+  document.body.classList.toggle('modelling', on);
+  document.getElementById('modelHint').classList.remove('armed');
+}
+setInterval(function(){ if (MODEL && Date.now() - modelLast > MODEL_IDLE){ setModelling(false); toast('Modelling switched itself off: his taps count again.'); } }, 30000);
+document.addEventListener('pointerdown', function(){ if (MODEL) modelLast = Date.now(); }, true);
+document.getElementById('modelHint').addEventListener('click', function(e){
+  e.stopPropagation(); hintArmed = !hintArmed; this.classList.toggle('armed', hintArmed);
+  if (hintArmed) toast('Now tap the picture to show him.');
+});
+document.getElementById('modelStop').addEventListener('click', function(e){ e.stopPropagation(); setModelling(false); toast('Modelling is off: his taps count again.'); });
+function hintTile(el){
+  if (!el) return;
+  el.classList.remove('hint'); void el.offsetWidth; el.classList.add('hint');
+  clearTimeout(el._hintT); el._hintT = setTimeout(function(){ el.classList.remove('hint'); }, 5200);
+}
+var WOW = null;
+try { WOW = JSON.parse(store('tt2_wow') || 'null'); } catch(e){}
+function wowKey(){ if (WOW && Date.now() > WOW.until){ WOW = null; store('tt2_wow', ''); } return WOW ? WOW.key : null; }
+/* the gold star on the word of the week, wherever it is on screen */
+function markWow(){
+  var k = wowKey(), els = document.querySelectorAll('#stage .tile, .core-btn');
+  for (var i = 0; i < els.length; i++){
+    var s = els[i].querySelector('.wow'), on = !!k && els[i]._item && els[i]._item._key === k;
+    if (on && !s){ s = document.createElement('span'); s.className = 'wow'; s.textContent = '⭐'; els[i].appendChild(s); }
+    else if (!on && s) s.remove();
+  }
+}
+function showModelSheet(){
+  var k = wowKey();
+  document.getElementById('modelGo').textContent = MODEL ? '✕ Stop modelling' : '🧑‍🏫 Start modelling';
+  document.getElementById('wowNow').textContent = k && BY_KEY[k] ? 'This week: ⭐ ' + BY_KEY[k].label + ' (until ' + new Date(WOW.until).toLocaleDateString([], {weekday: 'long'}) + ')' : 'None chosen.';
+  document.getElementById('wowOff').hidden = !k;
+}
+document.getElementById('modelGo').addEventListener('click', function(){
+  var on = !MODEL;
+  setModelling(on); modelSheet.classList.remove('open');
+  if (on){ panel.classList.remove('open'); toast('Modelling: your taps are said but not counted. 👆 = a hint.'); }
+  showTools();
+});
+document.getElementById('wowPick').addEventListener('click', function(){
+  pickTiles({max: 1, min: 1, title: 'Word of the week', hint: 'Tap the picture to use often this week, then Done.', done: function(keys){
+    WOW = {key: keys[0], until: Date.now() + 7 * 864e5}; store('tt2_wow', JSON.stringify(WOW)); markWow(); showModelSheet();
+  }});
+});
+document.getElementById('wowOff').addEventListener('click', function(){ WOW = null; store('tt2_wow', ''); markWow(); showModelSheet(); });
+document.getElementById('modelDone').addEventListener('click', function(){ modelSheet.classList.remove('open'); showTools(); });
+
+/* ============================================================
+   CHOOSE BETWEEN (Settings → 🤔, for staff)
+   Staff pick 2 to 4 pictures (lunch, clothes, an outing); they fill
+   the screen, big, for him to choose. Tapping one says it as usual
+   and the others fade (he can still change his mind). 🔊 asks the
+   choice out loud ("Shower, Bath, or Swimming?"). Close when done.
+   ============================================================ */
+var CHOICES = [];
+function chooseAnswer(){
+  var its = CHOICES.map(function(k){ return BY_KEY[k]; }).filter(Boolean), pieces = [], or = abcClip('words', 'or');
+  its.forEach(function(it, i){ if (i && i === its.length - 1) pieces.push({src: or}); pieces = pieces.concat(labelPieces(it)); });
+  return {pieces: pieces, text: its.map(function(it){ return it.label; }).join(', ').replace(/, ([^,]*)$/, ', or $1') + '?'};
+}
+document.getElementById('toolChoose').addEventListener('click', function(){
+  pickTiles({max: 4, min: 2, title: 'Choose between', hint: 'Tap 2, 3 or 4 pictures for him to choose from, then Done.', done: function(keys){
+    CHOICES = keys; panel.classList.remove('open'); openCard('choose');
+  }});
+});
+function markChoice(el){
+  var boxes = infoBody.querySelectorAll('.ctile');
+  for (var i = 0; i < boxes.length; i++) boxes[i].classList.toggle('faded', !boxes[i].contains(el));
+}
+
+/* ============================================================
+   TODAY ON THIS PHONE (Settings → Most-used pictures; off unless chosen)
+   A list of what was said, with the time: each picture, and each
+   sentence spelled on the ABC page. Health words (Ouch, Body, Sick,
+   and Help on the top row) are shown in red, so staff coming on
+   shift can see "My tummy hurts" at 2 pm. Kept for 2 days on this
+   phone only, never sent anywhere; Clear the counts clears it too.
+   "Chime for health words" (also off unless chosen) puts the
+   attention chime before those words, so staff across the room hear.
+   ============================================================ */
+var LOG_ON = store('tt2_log') === '1', HEALTH = store('tt2_healthchime') === '1', SAIDLOG = 'tt2_saidlog';
+function isHealth(key){ return /^(Ouch|Body|Sick)\|/.test(key || '') || key === 'core|Help'; }
+function readLog(){ try { return JSON.parse(store(SAIDLOG) || '[]') || []; } catch(e){ return []; } }
+function logSaid(text, item){
+  if (!LOG_ON || MODEL) return;
+  var l = readLog(), now = Date.now(), from = dayStart(new Date(now - 864e5)).getTime();
+  l.push({t: now, text: text, k: item && item._key || ''});
+  l = l.filter(function(e){ return e.t >= from; });
+  if (l.length > 600) l = l.slice(-600);
+  store(SAIDLOG, JSON.stringify(l));
+}
+function buildLog(){
+  var box = document.getElementById('logBox');
+  box.hidden = !LOG_ON;
+  if (!LOG_ON) return;
+  var all = readLog(), back = +document.querySelector('#logDay input:checked').value, d = dayStart(new Date());
+  d.setDate(d.getDate() - back);
+  var from = d.getTime(), to = from + 864e5, list = all.filter(function(e){ return e.t >= from && e.t < to; }).reverse();
+  var today = all.filter(function(e){ return e.t >= dayStart(new Date()).getTime(); }), hurt = today.filter(function(e){ return isHealth(e.k); }).length;
+  document.getElementById('logSum').textContent = 'Today on this phone: ' + today.length + (today.length === 1 ? ' thing said' : ' things said') +
+                                                  (hurt ? ' (' + hurt + (hurt === 1 ? ' health word)' : ' health words)') : '');
+  var out = document.getElementById('logList'); out.className = 'loglist'; out.innerHTML = '';
+  if (!list.length){ out.appendChild(el('p', 'empty-note', 'Nothing yet.')); return; }
+  list.forEach(function(e){
+    var row = el('div', isHealth(e.k) ? 'health' : '');
+    row.appendChild(el('span', '', new Date(e.t).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'})));
+    var w = el('span', '', e.text);
+    if (e.k){ var sm = el('small', '', '  ' + placeOf(e.k)); w.appendChild(sm); }
+    row.appendChild(w); out.appendChild(row);
+  });
+}
+var logRadios = document.querySelectorAll('#logDay input');
+for (var lri = 0; lri < logRadios.length; lri++) logRadios[lri].addEventListener('change', buildLog);
+
+/* ============================================================
    WHICH PICTURES GET USED
    Each tap adds one to that picture's count for the day. Kept on
    this phone only and never sent anywhere; the last 90 days are
@@ -1801,7 +3219,7 @@ function readCounts(){
   return {since: '', days: {}};
 }
 function countTap(item){
-  if (!countOn || !item || !item._key) return;
+  if (!countOn || MODEL || !item || !item._key) return;          /* modelling: staff taps aren't his */
   var now = Date.now();
   if (item._key === lastCount.key && now - lastCount.t < 3000){ lastCount.t = now; return; }
   lastCount = {key: item._key, t: now};
@@ -1817,10 +3235,15 @@ function tally(days){
   Object.keys(c.days).forEach(function(d){ if (d >= since) for (var k in c.days[d]) sum[k] = (sum[k] || 0) + c.days[d][k]; });
   return sum;
 }
-var ALL_ITEMS = LIB.core.concat.apply(LIB.core.slice(), LIB.pages.map(function(p){ return p.tiles.filter(function(t){ return !blank(t); }); }));
-var BY_KEY = {};
-ALL_ITEMS.concat([SPELLED]).forEach(function(it){ BY_KEY[it._key] = it; });
-function placeOf(key){ var p = key.split('|')[0]; return p === 'core' ? 'Top row' : p; }
+var ALL_ITEMS = [], BY_KEY = {};
+function indexItems(){                 /* every picture, the board's and the ones made on this phone */
+  var all = LIB.core.concat.apply(LIB.core.slice(), boardPages().map(function(p){ return (p.tiles || []).filter(function(t){ return !blank(t) && t._key; }); }));
+  BY_KEY = {}; ALL_ITEMS = [];
+  all.forEach(function(it){ if (!BY_KEY[it._key]){ BY_KEY[it._key] = it; ALL_ITEMS.push(it); } });   /* once each (a scene's spot can be a board picture) */
+  BY_KEY[SPELLED._key] = SPELLED;
+}
+indexItems();
+function placeOf(key){ var it = BY_KEY[key], p = key.split('|')[0]; return it && it._place ? it._place : p === 'core' ? 'Top row' : p; }
 function buildCounts(){
   var days = parseInt(document.querySelector('#countSpan input:checked').value, 10), c = readCounts();
   var sum = tally(days), keys = Object.keys(sum).filter(function(k){ return BY_KEY[k]; }).sort(function(a, b){ return sum[b] - sum[a]; });
@@ -1879,9 +3302,9 @@ function buildWeek(c){
 var spanRadios = document.querySelectorAll('#countSpan input');
 for (var si = 0; si < spanRadios.length; si++) spanRadios[si].addEventListener('change', buildCounts);
 document.getElementById('countClear').addEventListener('click', function(){
-  if (!confirm('Clear all the tap counts on this phone (and the words remembered for word suggestions)?')) return;
-  try { localStorage.removeItem(COUNTS); localStorage.removeItem(TYPED_WORDS); } catch(e){}   /* and the words remembered for suggestions */
-  buildCounts();
+  if (!confirm('Clear all the tap counts on this phone (and the words remembered for word suggestions, and today’s list)?')) return;
+  try { localStorage.removeItem(COUNTS); localStorage.removeItem(TYPED_WORDS); localStorage.removeItem(SAIDLOG); } catch(e){}   /* and the words remembered for suggestions */
+  buildCounts(); buildLog();
 });
 
 /* ============================================================
@@ -1909,6 +3332,7 @@ function openOwn(){
 function ownStore(mode){ return ownDb.transaction('mine', mode).objectStore('mine'); }
 function useOwn(rec){
   var o = own[rec.key];
+  if (rec.kind) mineRecs[rec.key] = rec;
   if (o){
     [o.photo, o.voice].forEach(function(u){ if (u){ delete audioCache[u]; URL.revokeObjectURL(u); } });
   }
@@ -1917,8 +3341,8 @@ function useOwn(rec){
 }
 function loadOwn(){
   return openOwn().then(function(){ return ownReq(ownStore('readonly').getAll()); })
-    .then(function(all){ all.forEach(useOwn); if (all.length) redrawPictures(); })
-    .catch(function(){});
+    .then(function(all){ all.forEach(useOwn); if (all.length) redrawPictures(); if (Object.keys(mineRecs).length) rebuildBoard(); })
+    .catch(function(){}).then(takeShared);
 }
 /* patch: {photo: Blob or null, voice: Blob or null}; null takes it away again */
 function saveOwn(key, patch){
@@ -1926,8 +3350,13 @@ function saveOwn(key, patch){
     rec = rec || {key: key};
     for (var k in patch) rec[k] = patch[k];
     var st = ownStore('readwrite');
-    return ownReq(rec.photo || rec.voice ? st.put(rec) : st.delete(key)).then(function(){
+    return ownReq(rec.photo || rec.voice || rec.kind ? st.put(rec) : st.delete(key)).then(function(){
       useOwn(rec); redrawPictures(); showOwnStat();
+      if (rec.kind || /^my(step|spot)\|/.test(key)){       /* made on this phone: its page (and its picture) may change */
+        rebuildBoard();
+        if (storyEd.classList.contains('open')) drawStoryEd();
+        if (sceneEd.classList.contains('open')) drawSceneEd();
+      }
       try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}   /* ask the phone to keep them */
     });
   });
@@ -1945,13 +3374,23 @@ function showOwnStat(){
   document.getElementById('ownStat').textContent = (p || v)
     ? 'On this phone: ' + p + (p === 1 ? ' photo' : ' photos') + ' and ' + v + (v === 1 ? ' recording.' : ' recordings.') + ' Save a backup now and then.'
     : 'None yet.';
+  /* when the last backup was made (Save or Send), and a nudge after a month */
+  var at = parseInt(store('tt2_backup_at') || '0', 10), days = at ? Math.floor((Date.now() - at) / 864e5) : -1;
+  var bs = document.getElementById('backupStat'), any = p || v || Object.keys(mineRecs).length;
+  bs.textContent = !any ? '' : days < 0 ? '⚠ No backup made on this phone yet.'
+                 : 'Last backup: ' + (days === 0 ? 'today' : days === 1 ? 'yesterday' : days + ' days ago') + (days >= 30 ? '. Time for a new one.' : '.');
+  bs.className = 'sub' + (any && (days < 0 || days >= 30) ? ' warn old' : '');
+  document.getElementById('ownSend').hidden = !canSendFiles();
 }
 
 /* ---- choosing a picture to change ---- */
 var chooser = document.getElementById('chooser'), editor = document.getElementById('editor'), chooserAt = 0;
-function chooserLists(){ return [{name: 'Top row', icon: '', color: '#8B5A2B', tiles: LIB.core}].concat(LIB.pages.filter(function(p){ return !p.keyboard; })); }
+function chooserLists(){
+  return [{name: 'Top row', icon: '', color: '#8B5A2B', tiles: LIB.core}].concat(LIB.pages.filter(function(p){ return !p.keyboard; }),
+         MY_PAGES.filter(function(p){ return p.type === 'tiles'; }));     /* the pages made on this phone: their ➕ spots make new pictures */
+}
 function openChooser(){ buildChooser(); chooser.classList.add('open'); }
-function closeChooser(){ chooser.classList.remove('open'); }
+function closeChooser(){ chooser.classList.remove('open'); if (sharedFor){ sharedFor = false; sharedBlob = null; } }
 function buildChooser(){
   var lists = chooserLists(), chips = document.getElementById('chooserPages'), grid = document.getElementById('chooserGrid');
   if (chooserAt >= lists.length) chooserAt = 0;
@@ -1965,15 +3404,36 @@ function buildChooser(){
   });
   var page = lists[chooserAt];
   grid.innerHTML = ''; paint(grid, page.color);
-  page.tiles.forEach(function(t){
-    if (blank(t)){ var s = document.createElement('div'); s.className = 'slot'; grid.appendChild(s); return; }
+  page.tiles.forEach(function(t, i){
+    if (blank(t)){
+      if (!page._my || sharedFor){ var s = document.createElement('div'); s.className = 'slot'; grid.appendChild(s); return; }
+      var add = makeTile({label: '➕ New', icon: ''});                   /* a page made on this phone: a new picture in this spot */
+      add.classList.add('mine-new'); add.querySelector('.pic').innerHTML = '';
+      add.addEventListener('click', function(){ makeNewPicture(null, page._my, i); });
+      grid.appendChild(add); return;
+    }
     var b = makeTile(t), o = own[t._key];
     b.classList.remove('lit');
     if (o){ var m = document.createElement('span'); m.className = 'owned'; m.textContent = (o.photo ? '📷' : '') + (o.voice ? '🎙️' : ''); b.appendChild(m); }
-    b.addEventListener('click', function(){ openEditor(t, page.color); });
+    b.addEventListener('click', function(){
+      if (sharedFor && sharedBlob){                                     /* a photo shared from the gallery goes on this picture */
+        var blob = sharedBlob; sharedBlob = null; sharedFor = false; showChooserHint();
+        shrinkPhoto(blob).then(function(ph){ return saveOwn(t._key, {photo: ph}); })
+          .then(function(){ buildChooser(); toast('✓ The photo is on “' + t.label + '” now.'); }, function(){ toast('That photo couldn’t be used.'); });
+        return;
+      }
+      openEditor(t, page.color);
+    });
     grid.appendChild(b);
   });
   fitLabels(grid);
+  document.getElementById('chooserWalk').hidden = sharedFor;
+  showChooserHint();
+}
+function showChooserHint(){
+  document.getElementById('chooserHint').textContent = sharedFor
+    ? 'Choose a page, then tap the picture to put the photo on.'
+    : 'Choose a page, then tap the picture to change. 📷 = has a photo, 🎙️ = has a recording.';
 }
 document.getElementById('ownOpen').addEventListener('click', openChooser);
 document.getElementById('chooserDone').addEventListener('click', closeChooser);
@@ -1984,25 +3444,45 @@ var edItem = null, edColor = '', recording = null, pending = null, MAX_REC = 20;
 function note(t){ document.getElementById('edNote').textContent = t; }
 function openEditor(item, color){
   edItem = item; edColor = color; dropPending(); note('');
-  document.getElementById('edTitle').textContent = item.label + (item.means ? ' (' + item.means + ')' : '');
-  document.getElementById('edSays').textContent = 'Says: “' + (item.say || item.label) + '”';
-  drawEditor();
+  if (walk){                                          /* going through a page: is this one of its pictures? */
+    var at = -1;
+    walk.list.forEach(function(t, i){ if (at === -1 && t._key === item._key) at = i; });
+    if (at === -1) walk = null; else walk.i = at;
+  }
+  drawEditor(); showMineFields(); showWalk();
   editor.classList.add('open');
 }
-/* Closing with a new recording not yet kept asks first, instead of quietly throwing it away. */
-function closeEditor(){
-  if (recording && !confirm('Still recording. Stop and throw this recording away?')) return;
+/* A new recording not kept yet: ask first (OK keeps it), instead of quietly throwing it away. Then carry on.
+   Returns false if the person chose to keep recording. */
+function settlePending(then){
+  if (recording && !confirm('Still recording. Stop and throw this recording away?')) return false;
   stopRecording(true); stopTalking();
-  if (pending && edItem && confirm('Keep the new recording for “' + edItem.label + '”?\n\nOK keeps it. Cancel throws it away.')){
+  if (pending && edItem && confirm('Keep the new recording for “' + (edItem.label || 'this picture') + '”?\n\nOK keeps it. Cancel throws it away.')){
     var b = pending.blob, key = edItem._key; dropPending();
     saveOwn(key, {voice: b}).then(function(){ if (chooser.classList.contains('open')) buildChooser(); });
   }
   dropPending();
-  editor.classList.remove('open');
-  if (chooser.classList.contains('open')) buildChooser();
+  then();
+  return true;
+}
+function closeEditor(){
+  var rec = edRec();
+  if (rec && !rec.label){                             /* a new picture with no words can't go on the board */
+    if ((own[rec.key] || pending) && !confirm('This new picture has no words yet, so it can’t go on the board. Throw it away?')) return;
+    dropPending(); stopRecording(true);
+  }
+  settlePending(function(){
+    if (rec && !rec.label) deleteMine(rec.key);
+    walk = null; edItem = null;
+    editor.classList.remove('open');
+    if (chooser.classList.contains('open')) buildChooser();
+  });
 }
 function drawEditor(){
   if (!edItem) return;
+  var rec = edRec();
+  document.getElementById('edTitle').textContent = rec ? (rec.label || 'New picture') : edItem.label + (edItem.means ? ' (' + edItem.means + ')' : '');
+  document.getElementById('edSays').textContent = rec ? mineSaid(rec) : 'Says: “' + (edItem.say || edItem.label) + '”';
   var box = document.getElementById('edPic'), o = own[edItem._key] || {};
   box.innerHTML = ''; paint(box, edColor);
   var t = makeTile(edItem); t.classList.remove('lit');
@@ -2024,12 +3504,12 @@ function hearIt(){
 }
 function dropPending(){ if (pending){ delete audioCache[pending.url]; URL.revokeObjectURL(pending.url); } pending = null; }
 
-/* Photos are shrunk to 640 px on their long side before saving: plenty for a tile. */
-function shrinkPhoto(file){
+/* Photos are shrunk to 640 px on their long side before saving: plenty for a tile (a scene's, which fills the page, to 1280). */
+function shrinkPhoto(file, most){
   return new Promise(function(ok, no){
     var url = URL.createObjectURL(file), im = new Image();
     im.onload = function(){
-      var s = Math.min(1, 640 / Math.max(im.naturalWidth, im.naturalHeight));
+      var s = Math.min(1, (most || 640) / Math.max(im.naturalWidth, im.naturalHeight));   /* a scene's photo: 1280 px */
       var c = document.createElement('canvas');
       c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s));
       c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
@@ -2139,7 +3619,13 @@ document.getElementById('edPlay').addEventListener('click', hearIt);
 document.getElementById('edKeep').addEventListener('click', function(){
   if (!pending) return;
   var b = pending.blob; dropPending();
-  saveOwn(edItem._key, {voice: b}).then(function(){ note('✓ Recording saved. The picture now says it in this voice.'); drawEditor(); });
+  var was = edItem._key;
+  saveOwn(was, {voice: b}).then(function(){
+    note('✓ Recording saved. The picture now says it in this voice.'); drawEditor();
+    if (walk && walk.i < walk.list.length - 1) setTimeout(function(){   /* going through a page: on to the next picture */
+      if (walk && edItem && edItem._key === was && !pending && !recording && editor.classList.contains('open')) walkTo(walk.i + 1);
+    }, 900);
+  });
 });
 document.getElementById('edRedo').addEventListener('click', function(){ dropPending(); note('Thrown away.'); drawEditor(); });
 document.getElementById('edVoiceOff').addEventListener('click', function(){
@@ -2152,21 +3638,75 @@ editor.addEventListener('click', function(e){ if (e.target === editor) closeEdit
 /* ---- backup ---- */
 function toData(b){ return new Promise(function(ok){ var r = new FileReader(); r.onload = function(){ ok(r.result); }; r.readAsDataURL(b); }); }
 function fromData(d){ return fetch(d).then(function(r){ return r.blob(); }); }
+/* Everything kept on this phone, as one file's worth of text. A photo or recording becomes text
+   ("data:…"); one inside a list (a story's steps, say) is kept as {"blob": "data:…"}. */
+function packValue(v){
+  if (v instanceof Blob) return toData(v).then(function(d){ return {blob: d}; });
+  if (Array.isArray(v)) return Promise.all(v.map(packValue));
+  if (v && typeof v === 'object'){
+    var out = {}, ks = Object.keys(v);
+    return Promise.all(ks.map(function(k){ return packValue(v[k]); })).then(function(vs){ ks.forEach(function(k, i){ out[k] = vs[i]; }); return out; });
+  }
+  return Promise.resolve(v);
+}
+function unpackValue(v){
+  if (v && typeof v === 'object' && !Array.isArray(v) && typeof v.blob === 'string' && Object.keys(v).length === 1) return fromData(v.blob);
+  if (Array.isArray(v)) return Promise.all(v.map(unpackValue));
+  if (v && typeof v === 'object'){
+    var out = {}, ks = Object.keys(v);
+    return Promise.all(ks.map(function(k){ return unpackValue(v[k]); })).then(function(vs){ ks.forEach(function(k, i){ out[k] = vs[i]; }); return out; });
+  }
+  return Promise.resolve(v);
+}
+function packRecord(r){
+  var rest = {};
+  Object.keys(r).forEach(function(k){ if (k !== 'photo' && k !== 'voice') rest[k] = r[k]; });
+  return Promise.all([r.photo ? toData(r.photo) : null, r.voice ? toData(r.voice) : null, packValue(rest)])
+    .then(function(d){ var it = d[2]; it.photo = d[0]; it.voice = d[1]; return it; });   /* photo and voice as in the first backups */
+}
+function unpackRecord(it){
+  var rest = {};
+  Object.keys(it).forEach(function(k){ if (k !== 'photo' && k !== 'voice') rest[k] = it[k]; });
+  return Promise.all([it.photo ? fromData(it.photo) : null, it.voice ? fromData(it.voice) : null, unpackValue(rest)])
+    .then(function(b){ var r = b[2]; r.key = it.key; r.photo = b[0]; r.voice = b[1]; return r; });
+}
+/* {name, text} or null when there's nothing to back up */
+function makeBackup(){
+  return openOwn().then(function(){ return ownReq(ownStore('readonly').getAll()); }).then(function(all){
+    if (!all.length) return null;
+    return Promise.all(all.map(packRecord)).then(function(items){
+      return {name: 'talanoa2-photos-and-voices-' + dayStr(new Date()),   /* its own name and label, so Talanoa's backups can't be mixed in */
+              text: JSON.stringify({app: 'talanoa2', kind: 'photos-and-voices', version: 2, saved: new Date().toISOString(), items: items})};
+    });
+  });
+}
+function backedUp(){ store('tt2_backup_at', String(Date.now())); showOwnStat(); }
 document.getElementById('ownSave').addEventListener('click', function(){
   var stat = document.getElementById('ownStat');
-  openOwn().then(function(){ return ownReq(ownStore('readonly').getAll()); }).then(function(all){
-    if (!all.length){ stat.textContent = 'Nothing to back up yet.'; return; }
-    return Promise.all(all.map(function(r){
-      return Promise.all([r.photo ? toData(r.photo) : null, r.voice ? toData(r.voice) : null])
-        .then(function(d){ return {key: r.key, photo: d[0], voice: d[1]}; });
-    })).then(function(items){
-      var name = 'talanoa2-photos-and-voices-' + dayStr(new Date()) + '.json';   /* its own name and label, so Talanoa's backups can't be mixed in */
-      var file = new Blob([JSON.stringify({app: 'talanoa2', kind: 'photos-and-voices', version: 1, saved: new Date().toISOString(), items: items})], {type: 'application/json'});
-      var a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 60000);
-      stat.textContent = '✓ Saved “' + name + '” in the phone’s Downloads. Keep a copy somewhere safe (email it to yourself).';
-    });
+  makeBackup().then(function(b){
+    if (!b){ stat.textContent = 'Nothing to back up yet.'; return; }
+    var name = b.name + '.json', file = new Blob([b.text], {type: 'application/json'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 60000);
+    backedUp();
+    stat.textContent = '✓ Saved “' + name + '” in the phone’s Downloads. Keep a copy somewhere safe (email it to yourself).';
+  }).catch(function(){ stat.textContent = 'The backup could not be made on this phone.'; });
+});
+/* Send a backup to another phone: Android's share menu (Quick Share works with no internet, or email,
+   Messenger…). Chrome only shares some kinds of file, so it goes as .txt; Restore takes .txt and .json. */
+function canSendFiles(){
+  try { return !!(navigator.share && navigator.canShare && navigator.canShare({files: [new File(['x'], 'x.txt', {type: 'text/plain'})]})); } catch(e){ return false; }
+}
+document.getElementById('ownSend').addEventListener('click', function(){
+  var stat = document.getElementById('ownStat');
+  makeBackup().then(function(b){
+    if (!b){ stat.textContent = 'Nothing to send yet.'; return; }
+    var f = new File([b.text], b.name + '.txt', {type: 'text/plain'});
+    return navigator.share({files: [f], title: 'Talanoa photos and voices'}).then(function(){
+      backedUp();
+      stat.textContent = '✓ Sent. On the other phone: Settings → Restore a backup, and choose “' + f.name + '” (usually in Downloads).';
+    }, function(err){ if (!err || err.name !== 'AbortError') stat.textContent = 'It couldn’t be sent from this phone. Use Save a backup instead.'; });
   }).catch(function(){ stat.textContent = 'The backup could not be made on this phone.'; });
 });
 document.getElementById('ownLoad').addEventListener('click', function(){ document.getElementById('ownFile').click(); });
@@ -2184,20 +3724,586 @@ document.getElementById('ownFile').addEventListener('change', function(e){
     if (data && data.app === 'talanoa') throw new Error('That backup is from Talanoa (another board), not Talanoa 2, so nothing was put back. Choose the file named “talanoa2-photos-and-voices-…”.');
     if (!data || data.app !== 'talanoa2' || !Array.isArray(data.items)) throw new Error('That file isn’t a Talanoa 2 backup. Choose the file named “talanoa2-photos-and-voices-…”.');
     return openOwn().catch(fail('This phone won’t let Talanoa keep photos and voices (private browsing, or site storage turned off in Chrome).')).then(function(){
-      return Promise.all(data.items.map(function(it){
-        return Promise.all([it.photo ? fromData(it.photo) : null, it.voice ? fromData(it.voice) : null])
-          .then(function(b){ return {key: it.key, photo: b[0], voice: b[1]}; });
-      })).catch(fail('Part of that backup is damaged, so nothing was put back. Try another copy of the file.'));
+      return Promise.all(data.items.map(unpackRecord)).catch(fail('Part of that backup is damaged, so nothing was put back. Try another copy of the file.'));
     }).then(function(recs){
       var st = ownStore('readwrite');
-      recs.forEach(function(r){ if (r.photo || r.voice){ st.put(r); useOwn(r); } });
+      recs.forEach(function(r){ if (r.photo || r.voice || r.kind){ st.put(r); useOwn(r); } });
       return new Promise(function(ok, no){ st.transaction.oncomplete = ok; st.transaction.onerror = st.transaction.onabort = function(){ no(st.transaction.error); }; })
         .catch(function(err){ throw new Error(err && err.name === 'QuotaExceededError' ? 'The phone is out of space, so the backup couldn’t be put back. Free some space and try again.'
                                                                                        : 'The phone couldn’t save the backup' + (err && err.name ? ' (' + err.name + ')' : '') + '. Try again.'); })
-        .then(function(){ redrawPictures(); showOwnStat(); stat.textContent = '✓ Put back ' + recs.length + (recs.length === 1 ? ' picture or voice.' : ' pictures and voices.'); });
+        .then(function(){
+          redrawPictures(); showOwnStat();
+          if (recs.some(function(r){ return r.kind; })) rebuildBoard();      /* pictures and pages made on a phone */
+          stat.textContent = '✓ Put back ' + recs.length + (recs.length === 1 ? ' picture or voice.' : ' pictures and voices.');
+        });
     });
   }).catch(function(err){ stat.textContent = (err && err.message) || 'The backup couldn’t be put back. Try again.'; });
 });
+
+/* ============================================================
+   MADE ON THIS PHONE (Settings → Photos and voices → Make a new picture)
+   Staff can make new pictures: words, a photo (or one of the board's
+   pictures) and, if they like, a recording. They go on pages of their
+   own ("My pictures", or a page they name), which sit after the
+   board's own pages, just above ABC, so nothing he knows moves. A
+   picture keeps its spot; deleting one leaves its spot for the next.
+   Like photos and recordings, they're kept on this phone only (and in
+   its backups), never on the website.
+   With no recording, a new picture talks in the board's voice if that
+   voice has every word (Michael has about 9,000; one word at a time,
+   like the ABC page), otherwise in the phone's own voice.
+   In the phone's storage: {key: "my|<id>", kind: "tile", page, pos,
+   label, say, icon, photo, voice} and {key: "mypage|<id>", kind:
+   "page", type, name, color, order}.
+   ============================================================ */
+var MY_COLORS = ['#00897B', '#5C6BC0', '#F4511E', '#8D6E63', '#43A047', '#D81B60', '#3949AB', '#6D4C41'];
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function mineList(kind){ return Object.keys(mineRecs).map(function(k){ return mineRecs[k]; }).filter(function(r){ return r.kind === kind; }); }
+function idOf(key){ return key.slice(key.indexOf('|') + 1); }
+function tileItem(t, place){
+  var it = {_key: t.key, label: t.label || '', say: t.say || '', icon: t.icon || '🖼️', _custom: true, _place: place};
+  var w = (it.say || it.label).trim();
+  if (/^[A-Za-z']+$/.test(w)) it._word = w.toLowerCase().replace(/[^a-z]/g, '');   /* one word: the ABC page's recording, quick */
+  return it;
+}
+function buildMine(){
+  var tiles = mineList('tile');
+  MY_PAGES = [];
+  mineList('page').sort(function(a, b){ return (a.order || 0) - (b.order || 0); }).forEach(function(pr){
+    var id = idOf(pr.key), p = {name: pr.name || 'My pictures', icon: pr.icon || '📌', color: pr.color || MY_COLORS[0], _my: id, type: pr.type || 'tiles', tiles: []};
+    if (p.type === 'tiles'){
+      var mine = tiles.filter(function(t){ return t.page === id && t.label; });
+      if (!mine.length) return;                                  /* a page with nothing on it isn't shown */
+      for (var i = 0; i < PER_PAGE; i++) p.tiles.push({empty: true});
+      mine.sort(function(a, b){ return (a.pos || 0) - (b.pos || 0); }).forEach(function(t){
+        var at = t.pos >= 0 && t.pos < PER_PAGE && blank(p.tiles[t.pos]) ? t.pos : p.tiles.findIndex(blank);
+        if (at >= 0) p.tiles[at] = tileItem(t, p.name);
+      });
+      var first = p.tiles.filter(function(t){ return !blank(t); })[0];
+      p.icon = first.icon;
+      if (own[first._key] && own[first._key].photo) p.img = own[first._key].photo;   /* its first picture, on the arrows */
+    }
+    else if (!MINE_KINDS[p.type] || MINE_KINDS[p.type].page(p, pr) === false) return;   /* scenes and stories: see SCENES AND STORIES */
+    MY_PAGES.push(p);
+  });
+}
+/* After something made on this phone changes: the pages again, staying on the same screen. */
+function rebuildBoard(){
+  var was = pages[current] ? pages[current].name : '', wasKey = pages[current] ? pages[current].key : '';
+  buildMine(); buildPages(); pages = visiblePages(); indexItems();
+  var i = -1;
+  pages.forEach(function(p, j){ if (i === -1 && p.name === was) i = j; });
+  if (i === -1) i = pageIndex(wasKey);
+  current = i === -1 ? 0 : i;
+  if (LOCKED && pageIndex(LOCKED.key) === -1) unlockPage();
+  render('');
+  if (pendingLink && !touchedYet && goToPage(pendingLink)) pendingLink = null;
+}
+function myPageRecs(){ return mineList('page').filter(function(r){ return (r.type || 'tiles') === 'tiles'; }).sort(function(a, b){ return (a.order || 0) - (b.order || 0); }); }
+function usedSpots(pageId, except){
+  var used = {};
+  mineList('tile').forEach(function(t){ if (t.page === pageId && t.key !== except) used[t.pos] = 1; });
+  return used;
+}
+function freeSpot(pageId, except){ var used = usedSpots(pageId, except); for (var i = 0; i < PER_PAGE; i++) if (!used[i]) return i; return -1; }
+function putMine(rec){
+  return openOwn().then(function(){ return ownReq(ownStore('readwrite').put(rec)); }).then(function(){
+    useOwn(rec);
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+  });
+}
+function newMyPage(name){
+  var n = myPageRecs().length;
+  var rec = {key: 'mypage|' + newId(), kind: 'page', type: 'tiles', name: name, color: MY_COLORS[n % MY_COLORS.length], order: Date.now()};
+  return putMine(rec).then(function(){ return rec; });
+}
+/* A page with room: the last one used, or a new "My pictures" (2, 3…) */
+function pageWithRoom(){
+  var list = myPageRecs().filter(function(r){ return freeSpot(idOf(r.key)) !== -1; });
+  if (list.length) return Promise.resolve(list[list.length - 1]);
+  var n = myPageRecs().length;
+  return newMyPage(n ? 'My pictures ' + (n + 1) : 'My pictures');
+}
+/* A new picture: on the page and in the spot given (a ➕ in the chooser), or wherever there's room. */
+function makeNewPicture(photo, pageId, pos){
+  var where = pageId && mineRecs['mypage|' + pageId] ? Promise.resolve(mineRecs['mypage|' + pageId]) : pageWithRoom();
+  return where.then(function(pr){
+    var pid = idOf(pr.key), spot = pos != null && !usedSpots(pid)[pos] ? pos : freeSpot(pid);
+    var rec = {key: 'my|' + newId(), kind: 'tile', page: pid, pos: spot, label: '', say: '', icon: '', made: Date.now()};
+    return putMine(rec).then(function(){
+      openEditor(tileItem(rec, pr.name), pr.color);
+      document.getElementById('edLabel').focus();
+      if (photo){
+        note('Saving the photo…');
+        shrinkPhoto(photo).then(function(b){ return saveOwn(rec.key, {photo: b}); })
+          .then(function(){ note('✓ Photo saved on this phone. Now type the words under it.'); drawEditor(); },
+                function(){ note('That photo couldn’t be used. Try another.'); });
+      }
+    });
+  });
+}
+function deleteMine(key){
+  return openOwn().then(function(){ return ownReq(ownStore('readwrite').delete(key)); }).then(function(){
+    delete mineRecs[key]; useOwn({key: key}); rebuildBoard(); showOwnStat();
+  });
+}
+/* Could the board's voice say all of these words? (Then a new picture with no recording uses it.) */
+function boardVoiceCan(text){
+  if (voiceId === 'device') return false;
+  var ws = String(text).trim().split(/\s+/).filter(Boolean);
+  return ws.length > 0 && ws.every(function(w){
+    var num = w.replace(/[^0-9]/g, '');
+    if (num && !/[a-z]/i.test(w)) return numberWords(parseInt(num, 10)).every(function(n){ return !!abcClip('words', n); });
+    var k = w.toLowerCase().replace(/[^a-z]/g, '');
+    return !k || !!abcClip('words', k);
+  });
+}
+document.getElementById('ownNew').addEventListener('click', function(){ makeNewPicture(null); });
+
+/* ---- the editor, for a new picture: its words, page and picture ---- */
+var edLabel = document.getElementById('edLabel'), edSay = document.getElementById('edSay'), edPage = document.getElementById('edPage');
+function edRec(){ return edItem && edItem._custom ? mineRecs[edItem._key] : null; }
+function showMineFields(){
+  var rec = edRec();
+  document.getElementById('edMine').hidden = !rec;
+  document.getElementById('edIcon').hidden = !rec && !/^mystep\|/.test(edItem._key);
+  document.getElementById('edDelete').hidden = !rec;
+  if (!rec) return;
+  edLabel.value = rec.label || ''; edSay.value = rec.say || '';
+  edPage.innerHTML = '';
+  myPageRecs().forEach(function(r){
+    var id = idOf(r.key), o = document.createElement('option'), full = r.key !== 'mypage|' + rec.page && freeSpot(id, rec.key) === -1;
+    o.value = id; o.textContent = r.name + (full ? ' (full)' : ''); o.disabled = full;
+    edPage.appendChild(o);
+  });
+  var o2 = document.createElement('option'); o2.value = '__new'; o2.textContent = '➕ A new page…'; edPage.appendChild(o2);
+  edPage.value = rec.page;
+}
+function mineSaid(rec){
+  var text = (rec.say || rec.label || '').trim();
+  if (!text) return 'Type the words that go under the picture.';
+  var has = own[rec.key] && own[rec.key].voice;
+  var how = has ? 'with the recording made on this phone'
+          : (ASSETS.clips[voiceId] || {})[text] ? 'in the board’s voice'
+          : boardVoiceCan(text) ? 'in the board’s voice, one word at a time'
+          : 'with the phone’s own voice (record it for a better voice)';
+  return 'Says: “' + text + '”, ' + how + '.';
+}
+function saveMineFields(patch){
+  var rec = edRec(); if (!rec) return Promise.resolve();
+  for (var k in patch) rec[k] = patch[k];
+  return putMine(rec).then(function(){
+    var pr = mineRecs['mypage|' + rec.page];
+    edItem = tileItem(rec, pr ? pr.name : '');
+    rebuildBoard(); drawEditor();
+    if (chooser.classList.contains('open')) buildChooser();
+  });
+}
+edLabel.addEventListener('input', function(){ document.getElementById('edTitle').textContent = edLabel.value.trim() || 'New picture'; });
+edLabel.addEventListener('change', function(){ saveMineFields({label: edLabel.value.trim()}); });
+edSay.addEventListener('change', function(){ saveMineFields({say: edSay.value.trim()}); });
+edPage.addEventListener('change', function(){
+  var rec = edRec(); if (!rec) return;
+  if (edPage.value !== '__new'){ saveMineFields({page: edPage.value, pos: freeSpot(edPage.value, rec.key)}); return; }
+  var name = (prompt('Name of the new page (for example: Church, Work, Grandma’s house):') || '').trim();
+  if (!name){ edPage.value = rec.page; return; }
+  newMyPage(name.slice(0, 30)).then(function(pr){ var id = idOf(pr.key); return saveMineFields({page: id, pos: freeSpot(id, rec.key)}); }).then(showMineFields);
+});
+document.getElementById('edDelete').addEventListener('click', function(){
+  var rec = edRec(); if (!rec) return;
+  if (!confirm('Delete “' + (rec.label || 'this picture') + '” from this phone? Its photo and recording go too.')) return;
+  var key = rec.key; edItem = null; dropPending();
+  editor.classList.remove('open');
+  deleteMine(key).then(function(){ if (chooser.classList.contains('open')) buildChooser(); });
+});
+
+/* ---- one of the board's own pictures, found by the words of the tiles that use it ---- */
+var iconPick = document.getElementById('iconPick'), iconFind = document.getElementById('iconFind'), iconWords = null;
+function buildIconGrid(q){
+  if (!iconWords){
+    iconWords = {};
+    LIB.core.concat.apply(LIB.core.slice(), LIB.pages.map(function(p){ return p.tiles.concat([p]); })).forEach(function(t){
+      if (t && t.icon && ASSETS.img[t.icon]) iconWords[t.icon] = (iconWords[t.icon] || '') + ' ' + plain((t.label || t.name || '') + ' ' + (t.say || '') + ' ' + (t.means || ''));
+    });
+  }
+  q = plain(q.trim());
+  var g = document.getElementById('iconGrid'); g.innerHTML = '';
+  Object.keys(iconWords).filter(function(e){ return !q || iconWords[e].indexOf(q) !== -1; }).forEach(function(e){
+    var b = document.createElement('button'), im = document.createElement('img');
+    im.src = ASSETS.img[e]; im.alt = iconWords[e].trim().split(' ')[0] || ''; im.loading = 'lazy';
+    b.appendChild(im); b.setAttribute('aria-label', im.alt);
+    b.addEventListener('click', function(){
+      iconPick.classList.remove('open');
+      var rec = edRec(), key = edItem && edItem._key;
+      if (!rec && !/^mystep\|/.test(key || '')) return;
+      var drop = own[key] && own[key].photo ? {photo: null} : null;
+      (drop ? saveOwn(key, drop) : Promise.resolve()).then(function(){
+        if (rec) return saveMineFields({icon: e});
+        return setStepIcon(key, e).then(function(){ edItem.icon = e; drawEditor(); });   /* a story's step */
+      }).then(function(){ note('✓ Picture chosen.'); });
+    });
+    g.appendChild(b);
+  });
+}
+document.getElementById('edIcon').addEventListener('click', function(){
+  var rec = edRec() || (edItem && {key: edItem._key});
+  if (rec && own[rec.key] && own[rec.key].photo && !confirm('Use one of the board’s pictures instead of the photo? The photo is taken off.')) return;
+  iconFind.value = ''; buildIconGrid(''); iconPick.classList.add('open');
+});
+iconFind.addEventListener('input', function(){ buildIconGrid(iconFind.value); });
+document.getElementById('iconDone').addEventListener('click', function(){ iconPick.classList.remove('open'); });
+
+/* ---- go through a page one picture at a time (the chooser's 🎙️ button) ----
+   Each picture opens in turn: record it (or give it a photo), and "Keep" moves on to the next. */
+var walk = null;
+function startWalk(page){
+  var list = page.tiles.filter(function(t){ return !blank(t); });
+  if (!list.length) return;
+  walk = {list: list, i: 0, color: page.color};
+  openEditor(list[0], page.color);
+}
+function walkTo(i){
+  if (!walk || i < 0 || i >= walk.list.length) return;
+  settlePending(function(){
+    walk.i = i;
+    var t = walk.list[i];
+    if (t._custom && mineRecs[t._key]) t = tileItem(mineRecs[t._key], t._place);
+    openEditor(t, walk.color);
+  });
+}
+function showWalk(){
+  var w = document.getElementById('edWalk');
+  w.hidden = !walk;
+  if (!walk) return;
+  document.getElementById('edWalkN').textContent = (walk.i + 1) + ' of ' + walk.list.length;
+  document.getElementById('edPrev').disabled = walk.i === 0;
+  document.getElementById('edNext').textContent = walk.i === walk.list.length - 1 ? 'Finish' : 'Next ›';
+}
+document.getElementById('edPrev').addEventListener('click', function(){ walkTo(walk.i - 1); });
+document.getElementById('edNext').addEventListener('click', function(){ if (walk.i === walk.list.length - 1) closeEditor(); else walkTo(walk.i + 1); });
+document.getElementById('chooserWalk').addEventListener('click', function(){ startWalk(chooserLists()[chooserAt]); });
+
+/* ---- a photo shared from the phone's gallery (Share → Talanoa) ----
+   The offline helper (sw.js) keeps it for a moment and opens Talanoa with ?shared=1. */
+var sharedBlob = null, sharedFor = false;
+function takeShared(){
+  if (!/[?&]shared=1/.test(location.search) || !('caches' in window)) return;
+  try { history.replaceState(history.state, '', location.pathname); } catch(e){}
+  caches.open(SHARE_CACHE).then(function(c){
+    return c.match('shared-photo').then(function(r){ c.delete('shared-photo'); return r ? r.blob() : null; });
+  }).then(function(b){
+    if (!b || !/^image\//.test(b.type)) return;
+    sharedBlob = b;
+    var box = document.getElementById('sharedPic'), im = document.createElement('img');
+    im.src = URL.createObjectURL(b); box.innerHTML = ''; box.appendChild(im);
+    document.getElementById('shared').classList.add('open');
+  }).catch(function(){});
+}
+var SHARE_CACHE = 'tt2-share';
+function closeShared(){ document.getElementById('shared').classList.remove('open'); }
+document.getElementById('sharedCancel').addEventListener('click', function(){ sharedBlob = null; closeShared(); });
+document.getElementById('sharedNew').addEventListener('click', function(){ closeShared(); var b = sharedBlob; sharedBlob = null; makeNewPicture(b); });
+document.getElementById('sharedOld').addEventListener('click', function(){ closeShared(); sharedFor = true; openChooser(); note(''); });
+
+/* ============================================================
+   SCENES AND STORIES (Settings → Photos and voices; made on this phone)
+   A scene is a photo of a real place (his room, the kitchen) with
+   spots to tap: the fridge says "I want a drink", the TV "I want to
+   watch Toy Story". A spot says one of the board's pictures, or words
+   typed for it (which can be given a recording). Research on AAC calls
+   these "visual scene displays": the picture is the place itself.
+   A story is a few steps, each a picture and a line ("We drive to the
+   dentist"), read one step at a time with Back and Next: for getting
+   ready for something new, or for telling what he did today.
+   Both are pages of their own, after the board's pages and before
+   ABC, and are kept on this phone only (and in its backups).
+   In storage, the page's record holds the scene's spots or the
+   story's steps; the scene's photo is the page record's own photo,
+   and each step's (or typed spot's) photo and recording are kept
+   like any picture's, under "mystep|<id>" / "myspot|<id>".
+   ============================================================ */
+var storyAt = {};                                    /* page key → the step showing */
+function spotItem(sp, name){
+  if (sp.ref && BY_KEY[sp.ref]) return BY_KEY[sp.ref];
+  return {_key: 'myspot|' + sp.id, label: sp.label || '', say: sp.label || '', icon: '📍', _custom: true, _place: name};
+}
+function stepItem(st, name){
+  return {_key: 'mystep|' + st.id, label: st.text || '', say: st.text || '', icon: st.icon || '📖', _custom: true, _place: name};
+}
+MINE_KINDS.scene = {page: function(p, pr){
+  var photo = own[pr.key] && own[pr.key].photo;
+  if (!photo) return false;                          /* not on the board until it has its photo */
+  p.icon = '🏞️'; p.img = photo || null;
+  p.scene = {photo: photo, size: pr.size || 'm', words: pr.words !== false, spots: (pr.spots || []).filter(function(sp){ return sp.ref || sp.label; })};
+  p.tiles = p.scene.spots.map(function(sp){ return spotItem(sp, p.name); });
+}};
+MINE_KINDS.story = {page: function(p, pr){
+  var steps = (pr.steps || []).filter(function(st){ return st.text || (own['mystep|' + st.id] || {}).photo; });
+  if (!steps.length) return false;                   /* not on the board until it has a step */
+  p.story = {items: steps.map(function(st){ return stepItem(st, p.name); })};
+  p.tiles = p.story.items;
+  var first = p.tiles[0];
+  p.icon = '📖'; p.img = first && own[first._key] && own[first._key].photo || null;
+}};
+/* The spots, as many as fit, where the photo is shown (it's fitted whole into the page, so spots move with it). */
+function buildScene(page){
+  var g = document.createElement('div'), sc = page.mine.scene;
+  g.className = 'grid scene'; paint(g, page.color);
+  if (!sc.photo){ g.appendChild(el('div', 'empty-note', 'This scene has no photo yet (Settings → Photos and voices).')); return g; }
+  var img = new Image(); img.className = 'sceneimg'; img.alt = ''; img.src = sc.photo; img.draggable = false;
+  g.appendChild(img);
+  sc.spots.forEach(function(sp, i){
+    var b = document.createElement('button'), it = page.tiles[i];
+    b.className = 'tile spot'; b._item = it; b.setAttribute('aria-label', it.say || it.label);
+    if (sc.words) b.appendChild(el('span', 'spotlab', it.label));
+    g.appendChild(b);
+  });
+  function place(){ layoutScene(g, img, sc); }
+  g._relayout = place;
+  if (img.complete) setTimeout(place, 0); else img.onload = place;
+  return g;
+}
+function layoutScene(g, img, sc){
+  var W = g.clientWidth, H = g.clientHeight, w = img.naturalWidth, h = img.naturalHeight;
+  if (!W || !H || !w || !h) return;
+  var k = Math.min(W / w, H / h), dw = w * k, dh = h * k, ox = (W - dw) / 2, oy = (H - dh) / 2;
+  img.style.left = ox + 'px'; img.style.top = oy + 'px'; img.style.width = dw + 'px'; img.style.height = dh + 'px';
+  var d = Math.max(44, Math.min(dw, dh) * ({s: 0.14, m: 0.2, l: 0.28}[sc.size] || 0.2)), spots = g.querySelectorAll('.spot');
+  sc.spots.forEach(function(sp, i){
+    var b = spots[i];
+    b.style.width = b.style.height = d + 'px';
+    b.style.left = (ox + sp.x * dw - d / 2) + 'px'; b.style.top = (oy + sp.y * dh - d / 2) + 'px';
+  });
+}
+window.addEventListener('resize', function(){ if (gridEl && gridEl._relayout) gridEl._relayout(); });
+/* A story: the step's picture and words (tap it to hear it again), and Back · 2 of 5 · Next below. Next says the new step. */
+function buildStory(page){
+  var items = page.mine.story.items, g = document.createElement('div');
+  g.className = 'grid story'; paint(g, page.color);
+  if (!items.length){ g.appendChild(el('div', 'empty-note', 'This story has no steps yet.')); return g; }
+  var i = Math.max(0, Math.min(storyAt[page.key] || 0, items.length - 1));
+  var t = makeTile(items[i]); t.classList.add('storypic'); g.appendChild(t);
+  function navBtn(label, step, off){
+    var b = document.createElement('button');
+    b.className = 'tile storybtn' + (off ? ' off' : '');
+    b._item = {label: label, act: function(){ if (!off) turnStory(page, step); }};
+    var l = el('div', 'lab', label); b.appendChild(l);
+    return b;
+  }
+  g.appendChild(navBtn('◀ Back', -1, i === 0));
+  g.appendChild(el('div', 'storyn', (i + 1) + ' of ' + items.length));
+  g.appendChild(navBtn(i === items.length - 1 ? 'The end' : 'Next ▶', 1, i === items.length - 1));
+  return g;
+}
+function turnStory(page, step){
+  var items = page.mine.story.items, i = Math.max(0, Math.min((storyAt[page.key] || 0) + step, items.length - 1));
+  storyAt[page.key] = i;
+  render('');
+  var t = gridEl.querySelector('.storypic');
+  if (t) announce(t._item, t);                       /* the new step is read out, like turning a page in a book */
+}
+
+/* ---- making and changing a scene ---- */
+var sceneEd = document.getElementById('sceneEd'), spotSheet = document.getElementById('spotSheet'), seKey = null, spotAt = null;
+function seRec(){ return seKey && mineRecs[seKey]; }
+function newScene(){
+  var name = (prompt('Name of the scene (for example: My room, The kitchen):') || '').trim();
+  if (!name) return;
+  var rec = {key: 'mypage|' + newId(), kind: 'page', type: 'scene', name: name.slice(0, 30), order: Date.now(), size: 'm', words: true, spots: [],
+             color: MY_COLORS[(myPageRecs().length + 3) % MY_COLORS.length]};
+  putMine(rec).then(function(){ openSceneEd(rec.key); document.getElementById('seGal').focus(); });
+}
+function openSceneEd(key){ seKey = key; drawSceneEd(); sceneEd.classList.add('open'); }
+function drawSceneEd(){
+  var rec = seRec(); if (!rec) return;
+  document.getElementById('seTitle').textContent = '🏞️ ' + rec.name;
+  var box = document.getElementById('seBox'), photo = own[rec.key] && own[rec.key].photo;
+  box.innerHTML = ''; box.onclick = null;
+  if (!photo){ box.appendChild(el('div', 'empty-photo', 'First take a photo of the place, or choose one.')); }
+  else {
+    var img = new Image(); img.src = photo; img.alt = ''; box.appendChild(img);
+    var d = {s: 14, m: 20, l: 28}[rec.size || 'm'];
+    (rec.spots || []).forEach(function(sp, i){
+      var e = el('div', 'espot'), it = spotItem(sp, rec.name);
+      e.style.left = (sp.x * 100) + '%'; e.style.top = (sp.y * 100) + '%';
+      e.style.width = e.style.height = 'calc(' + d + '% * var(--short, 1))';
+      e.appendChild(el('span', '', it.label || '…'));
+      e.addEventListener('click', function(ev){ ev.stopPropagation(); openSpot(i); });
+      box.appendChild(e);
+    });
+    function size(){ var w = img.clientWidth, h = img.clientHeight; if (w && h) box.style.setProperty('--short', (Math.min(w, h) / w).toFixed(3)); }
+    if (img.complete) size(); else img.addEventListener('load', size);
+    box.onclick = function(ev){                      /* (pictures ignore touches, so the box around it listens) */
+      var r = img.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+      if (x >= 0 && x <= 1 && y >= 0 && y <= 1) openSpot(null, {x: x, y: y});
+    };
+  }
+  var rs = document.querySelectorAll('#seSize input');
+  for (var i = 0; i < rs.length; i++) rs[i].checked = rs[i].value === (rec.size || 'm');
+  document.getElementById('seWords').checked = rec.words !== false;
+}
+function saveScene(patch){
+  var rec = seRec(); if (!rec) return Promise.resolve();
+  for (var k in patch) rec[k] = patch[k];
+  return putMine(rec).then(function(){ rebuildBoard(); drawSceneEd(); });
+}
+['seCamFile', 'seGalFile'].forEach(function(id){
+  var inp = document.getElementById(id);
+  inp.addEventListener('change', function(){
+    var f = inp.files && inp.files[0], key = seKey; inp.value = '';
+    if (!f || !key) return;
+    shrinkPhoto(f, 1280).then(function(b){ return saveOwn(key, {photo: b}); }).then(drawSceneEd, function(){ toast('That photo couldn’t be used. Try another.'); });
+  });
+});
+document.getElementById('seCam').addEventListener('click', function(){ document.getElementById('seCamFile').click(); });
+document.getElementById('seGal').addEventListener('click', function(){ document.getElementById('seGalFile').click(); });
+var seSizes = document.querySelectorAll('#seSize input');
+for (var ssi = 0; ssi < seSizes.length; ssi++) seSizes[ssi].addEventListener('change', function(e){ saveScene({size: e.target.value}); });
+document.getElementById('seWords').addEventListener('change', function(e){ saveScene({words: e.target.checked}); });
+document.getElementById('seRename').addEventListener('click', function(){
+  var rec = seRec(), name = (prompt('New name for the scene:', rec.name) || '').trim();
+  if (name) saveScene({name: name.slice(0, 30)});
+});
+document.getElementById('seDelete').addEventListener('click', function(){
+  var rec = seRec();
+  if (!rec || !confirm('Delete the scene “' + rec.name + '” from this phone? Its photo goes too.')) return;
+  var keys = [rec.key].concat((rec.spots || []).map(function(sp){ return 'myspot|' + sp.id; }));
+  sceneEd.classList.remove('open'); seKey = null;
+  deleteKeys(keys);
+});
+document.getElementById('seDone').addEventListener('click', function(){ sceneEd.classList.remove('open'); seKey = null; showMineList(); });
+/* a spot: new (at a place on the photo) or one already there */
+function openSpot(i, at){
+  var rec = seRec(); spotAt = {i: i, at: at};
+  var sp = i != null ? rec.spots[i] : null;
+  document.getElementById('spTitle').textContent = sp ? 'Spot: ' + (spotItem(sp, rec.name).label || '…') : 'A new spot';
+  document.getElementById('spDel').hidden = !sp;
+  document.getElementById('spVoice').hidden = !(sp && !sp.ref && sp.label);
+  spotSheet.classList.add('open');
+}
+function setSpot(patch){
+  var rec = seRec(), spots = (rec.spots || []).slice();
+  if (spotAt.i == null) spots.push(Object.assign({id: newId(), x: spotAt.at.x, y: spotAt.at.y}, patch));
+  else spots[spotAt.i] = Object.assign({}, spots[spotAt.i], patch);
+  spotSheet.classList.remove('open');
+  return saveScene({spots: spots});
+}
+document.getElementById('spPick').addEventListener('click', function(){
+  pickTiles({max: 1, min: 1, title: 'What does this spot say?', hint: 'Tap the picture it says, then Done.', done: function(keys){ setSpot({ref: keys[0], label: ''}); }});
+});
+document.getElementById('spType').addEventListener('click', function(){
+  var rec = seRec(), sp = spotAt.i != null ? rec.spots[spotAt.i] : null;
+  var t = (prompt('Words for this spot (what it says):', sp && !sp.ref ? sp.label : '') || '').trim();
+  if (t) setSpot({ref: null, label: t.slice(0, 120)});
+});
+document.getElementById('spVoice').addEventListener('click', function(){
+  var rec = seRec(), sp = rec.spots[spotAt.i];
+  spotSheet.classList.remove('open');
+  openEditor(spotItem(sp, rec.name), rec.color);
+});
+document.getElementById('spDel').addEventListener('click', function(){
+  var rec = seRec(), sp = rec.spots[spotAt.i], spots = rec.spots.filter(function(x, j){ return j !== spotAt.i; });
+  spotSheet.classList.remove('open');
+  saveScene({spots: spots}).then(function(){ if (!sp.ref) deleteKeys(['myspot|' + sp.id]); });
+});
+document.getElementById('spCancel').addEventListener('click', function(){ spotSheet.classList.remove('open'); });
+
+/* ---- making and changing a story ---- */
+var storyEd = document.getElementById('storyEd'), stKey = null;
+function stRec(){ return stKey && mineRecs[stKey]; }
+function newStory(){
+  var name = (prompt('Name of the story (for example: Going to the dentist, My weekend):') || '').trim();
+  if (!name) return;
+  var rec = {key: 'mypage|' + newId(), kind: 'page', type: 'story', name: name.slice(0, 30), order: Date.now(), steps: [],
+             color: MY_COLORS[(myPageRecs().length + 5) % MY_COLORS.length]};
+  putMine(rec).then(function(){ openStoryEd(rec.key); });
+}
+function openStoryEd(key){ stKey = key; drawStoryEd(); storyEd.classList.add('open'); }
+function drawStoryEd(){
+  var rec = stRec(); if (!rec) return;
+  document.getElementById('stTitle').textContent = '📖 ' + rec.name;
+  var box = document.getElementById('stSteps'); box.innerHTML = '';
+  if (!(rec.steps || []).length) box.appendChild(el('p', 'empty-note', 'No steps yet: add the first one.'));
+  (rec.steps || []).forEach(function(st, i){
+    var row = el('div', 'strow'), th = el('button', 'th'), it = stepItem(st, rec.name), o = own[it._key] || {};
+    th.setAttribute('aria-label', 'Photo or recording for step ' + (i + 1));
+    if (o.photo){ var im = new Image(); im.src = o.photo; im.alt = ''; th.appendChild(im); } else th.appendChild(emoji(st.icon || '📖'));
+    th.addEventListener('click', function(){ openEditor(it, rec.color); });
+    row.appendChild(th);
+    row.appendChild(el('div', 'tx', (i + 1) + '. ' + (st.text || '(no words yet)') + (o.voice ? '  🎙️' : '')));
+    var bt = el('div', 'bt');
+    [['✏️', 'Change the words', function(){ var t = (prompt('Words for step ' + (i + 1) + ':', st.text || '') || '').trim(); if (t) saveStory(i, {text: t.slice(0, 160)}); }],
+     ['↑', 'Move up', function(){ moveStep(i, -1); }], ['↓', 'Move down', function(){ moveStep(i, 1); }],
+     ['🗑', 'Delete this step', function(){ if (confirm('Delete step ' + (i + 1) + '?')) deleteStep(i); }]].forEach(function(x){
+      var b = el('button', '', x[0]); b.setAttribute('aria-label', x[1]); b.addEventListener('click', x[2]); bt.appendChild(b);
+    });
+    row.appendChild(bt); box.appendChild(row);
+  });
+}
+function saveStoryRec(steps){
+  var rec = stRec(); rec.steps = steps;
+  return putMine(rec).then(function(){ rebuildBoard(); drawStoryEd(); });
+}
+function saveStory(i, patch){ var steps = stRec().steps.slice(); steps[i] = Object.assign({}, steps[i], patch); return saveStoryRec(steps); }
+function moveStep(i, d){
+  var steps = stRec().steps.slice(), j = i + d;
+  if (j < 0 || j >= steps.length) return;
+  var t = steps[i]; steps[i] = steps[j]; steps[j] = t;
+  saveStoryRec(steps);
+}
+function deleteStep(i){
+  var steps = stRec().steps.slice(), gone = steps.splice(i, 1)[0];
+  saveStoryRec(steps).then(function(){ deleteKeys(['mystep|' + gone.id]); });
+}
+document.getElementById('stAdd').addEventListener('click', function(){
+  var rec = stRec(), n = (rec.steps || []).length + 1;
+  var t = (prompt('Words for step ' + n + ' (for example: We get in the car):') || '').trim();
+  if (!t) return;
+  var st = {id: newId(), text: t.slice(0, 160)};
+  saveStoryRec((rec.steps || []).concat([st])).then(function(){
+    openEditor(stepItem(st, rec.name), rec.color);          /* now its photo (or a board picture) and, if you like, a recording */
+    note('Give this step a photo (or one of the board’s pictures), and a recording if you like.');
+  });
+});
+document.getElementById('stRename').addEventListener('click', function(){
+  var rec = stRec(), name = (prompt('New name for the story:', rec.name) || '').trim();
+  if (name){ rec.name = name.slice(0, 30); putMine(rec).then(function(){ rebuildBoard(); drawStoryEd(); }); }
+});
+document.getElementById('stDelete').addEventListener('click', function(){
+  var rec = stRec();
+  if (!rec || !confirm('Delete the story “' + rec.name + '” from this phone? Its photos and recordings go too.')) return;
+  var keys = [rec.key].concat((rec.steps || []).map(function(st){ return 'mystep|' + st.id; }));
+  storyEd.classList.remove('open'); stKey = null;
+  deleteKeys(keys);
+});
+document.getElementById('stDone').addEventListener('click', function(){ storyEd.classList.remove('open'); stKey = null; showMineList(); });
+/* a step's own board picture, chosen in the editor (🙂) */
+function setStepIcon(key, icon){
+  var rec = stRec(); if (!rec) return Promise.resolve();
+  var i = (rec.steps || []).findIndex(function(st){ return 'mystep|' + st.id === key; });
+  return i === -1 ? Promise.resolve() : saveStory(i, {icon: icon});
+}
+function deleteKeys(keys){
+  return openOwn().then(function(){
+    var st = ownStore('readwrite');
+    keys.forEach(function(k){ st.delete(k); });
+    return new Promise(function(ok){ st.transaction.oncomplete = ok; st.transaction.onerror = ok; });
+  }).then(function(){
+    keys.forEach(function(k){ delete mineRecs[k]; useOwn({key: k}); });
+    rebuildBoard(); showOwnStat(); showMineList();
+  });
+}
+document.getElementById('ownScene').addEventListener('click', newScene);
+document.getElementById('ownStory').addEventListener('click', newStory);
+/* the scenes and stories on this phone, to change them */
+function showMineList(){
+  var box = document.getElementById('mineList'); box.innerHTML = '';
+  mineList('page').filter(function(r){ return r.type === 'scene' || r.type === 'story'; }).sort(function(a, b){ return (a.order || 0) - (b.order || 0); }).forEach(function(r){
+    var b = el('button', '', (r.type === 'scene' ? '🏞️ ' : '📖 ') + r.name + ' ✏️');
+    b.addEventListener('click', function(){ if (r.type === 'scene') openSceneEd(r.key); else openStoryEd(r.key); });
+    box.appendChild(b);
+  });
+}
 
 /* ---------------- offline ---------------- */
 var VOICE_CACHE = 'tt2-voices';
@@ -2246,7 +4352,11 @@ function warmVoice(){
   return job;
 }
 /* Touches in Settings (or its photo-and-voice screens) don't pause the saving: only the board being used does. */
-function inSettings(){ return panel.classList.contains('open') || chooser.classList.contains('open') || editor.classList.contains('open'); }
+function inSettings(){
+  return panel.classList.contains('open') || chooser.classList.contains('open') || editor.classList.contains('open') || iconPick.classList.contains('open') ||
+         timerSheet.classList.contains('open') || tilePick.classList.contains('open') || modelSheet.classList.contains('open') ||
+         sceneEd.classList.contains('open') || storyEd.classList.contains('open') || spotSheet.classList.contains('open');
+}
 /* While Settings is open, the saving line keeps itself up to date (until everything is saved). */
 var offlineDone = false;
 setInterval(function(){ if (!offlineDone && panel.classList.contains('open')) refreshOffline(); }, 2000);
@@ -2355,9 +4465,9 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
    On most Android phones a swipe in from the left or right edge of
    the screen means Back, and Back would close Talanoa. So the app
    keeps one spare step in its history. Back uses that up instead of
-   closing the app (and closes whatever is open on top: the big words,
-   the photo-and-voice editor or its chooser, Settings, or the page
-   list). The spare step is put back on the next tap.
+   closing the app (and closes whatever is open on top: the sticker
+   scanner, the big words, the photo-and-voice editor or its chooser,
+   Settings, or the page list). The spare step is put back on the next tap.
    ============================================================ */
 var spareStep = !!(history.state && history.state.tt);
 function keepSpareStep(){
@@ -2368,9 +4478,19 @@ document.addEventListener('pointerup', keepSpareStep, true);
 document.addEventListener('keydown', keepSpareStep, true);
 window.addEventListener('popstate', function(){
   spareStep = !!(history.state && history.state.tt);
-  if (showView.classList.contains('open')) closeShow();          /* the top layer closes first */
+  if (scanView.classList.contains('open')) closeScanner();       /* the top layer closes first */
+  else if (showView.classList.contains('open')) closeShow();
+  else if (tilePick.classList.contains('open')) tilePick.classList.remove('open');
+  else if (timerSheet.classList.contains('open')) timerSheet.classList.remove('open');
+  else if (modelSheet.classList.contains('open')) modelSheet.classList.remove('open');
+  else if (spotSheet.classList.contains('open')) spotSheet.classList.remove('open');
+  else if (infoView.classList.contains('open')) closeCard();
+  else if (iconPick.classList.contains('open')) iconPick.classList.remove('open');
+  else if (document.getElementById('shared').classList.contains('open')) closeShared();
   else if (editor.classList.contains('open')) closeEditor();
   else if (chooser.classList.contains('open')) closeChooser();
+  else if (sceneEd.classList.contains('open')){ sceneEd.classList.remove('open'); seKey = null; }
+  else if (storyEd.classList.contains('open')){ storyEd.classList.remove('open'); stKey = null; }
   else if (panel.classList.contains('open')) panel.classList.remove('open');
   else if (picker.classList.contains('open')) picker.classList.remove('open');
 });

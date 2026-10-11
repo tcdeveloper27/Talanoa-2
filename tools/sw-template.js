@@ -7,6 +7,7 @@
 var VERSION = '__VERSION__';
 var CACHE = 'tt2-app-' + VERSION;
 var VOICE_CACHE = 'tt2-voices';
+var SHARE_CACHE = 'tt2-share';       /* a photo shared to Talanoa, until the page picks it up */
 var PRECACHE = __PRECACHE__;
 
 self.addEventListener('install', function (e) {
@@ -52,9 +53,22 @@ function slice(req, res) {
 
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  /* A photo shared to Talanoa from the gallery (the manifest's "share_target"): keep it, then open the
+     app, which offers to make a new picture with it or put it on one already on the board. */
+  if (req.method === 'POST' && /\/share-photo$/.test(url.pathname)) {
+    e.respondWith(req.formData().then(function (form) {
+      var f = form.get('photo');
+      if (!f || !f.size) return null;
+      return caches.open(SHARE_CACHE).then(function (c) {
+        return c.put('shared-photo', new Response(f, { headers: { 'Content-Type': f.type || 'image/jpeg' } }));
+      });
+    }).catch(function () {}).then(function () { return Response.redirect('./?shared=1', 303); }));
+    return;
+  }
+  if (req.method !== 'GET') return;
 
   if (url.pathname.indexOf('/voices/') !== -1) {
     /* Fetch the whole clip once (never a partial), keep it, then serve the range asked for. */

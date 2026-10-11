@@ -9,8 +9,92 @@
   "background_color": "#FDF6E3",
   "theme_color": "#6B4423",
   "icons": [
-    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
-  ]
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "I want",
+      "short_name": "I want",
+      "url": "./?page=i-want",
+      "icons": [
+        {
+          "src": "icons/page-i-want.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "I feel",
+      "short_name": "I feel",
+      "url": "./?page=i-feel",
+      "icons": [
+        {
+          "src": "icons/page-i-feel.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Ouch",
+      "short_name": "Ouch",
+      "url": "./?page=ouch",
+      "icons": [
+        {
+          "src": "icons/page-ouch.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Food",
+      "short_name": "Food",
+      "url": "./?page=food",
+      "icons": [
+        {
+          "src": "icons/page-food.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
+  "share_target": {
+    "action": "./share-photo",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "photo",
+          "accept": [
+            "image/*"
+          ]
+        }
+      ]
+    }
+  }
 }

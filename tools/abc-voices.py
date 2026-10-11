@@ -56,7 +56,8 @@ LETTER_OK = {
 SOUNDS_ALIKE = [('to', 'too', 'two'), ('for', 'four'), ('no', 'know'), ('i', 'eye'), ('be', 'bee'),
                 ('see', 'sea'), ('right', 'write'), ('there', 'their'), ('here', 'hear'), ('one', 'won'),
                 ('by', 'buy', 'bye'), ('ate', 'eight'), ('our', 'hour'), ('new', 'knew'), ('read', 'red'),
-                ('wait', 'weight'), ('son', 'sun'), ('night', 'knight'), ('hi', 'high'), ('mom', 'mum')]
+                ('wait', 'weight'), ('son', 'sun'), ('night', 'knight'), ('hi', 'high'), ('mom', 'mum'),
+                ('oh', 'o', 'owe')]
 
 
 # The recogniser writes numbers as digits ("4th" for "fourth")
@@ -66,11 +67,17 @@ NUMBERS = dict(zip('0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 30 40 5
                    'thousand'.split()))
 NUMBERS.update(zip('1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th'.split(),
                    'first second third fourth fifth sixth seventh eighth ninth tenth'.split()))
+# ... and the rest of a month's days (the Time page's dates, 2026-10-11): "21st" is "twenty first"
+NUMBERS.update(zip(('11th 12th 13th 14th 15th 16th 17th 18th 19th 20th 21st 22nd 23rd 24th 25th 26th 27th 28th 29th 30th '
+                    '31st').split(),
+                   ('eleventh twelfth thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth twentieth '
+                    'twenty-first twenty-second twenty-third twenty-fourth twenty-fifth twenty-sixth twenty-seventh '
+                    'twenty-eighth twenty-ninth thirtieth thirty-first').split()))
 
 
 def norm(s):
     words = re.sub(r"[^a-z0-9' ]+", ' ', s.lower().replace('-', ' ')).split()
-    return ' '.join(NUMBERS.get(w, w) for w in words).replace("'", '')
+    return ' '.join(NUMBERS.get(w, w) for w in words).replace("'", '').replace('-', ' ')
 
 
 key = build.abc_key

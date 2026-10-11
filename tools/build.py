@@ -10,8 +10,9 @@ What it does
      (a typo, a Dad tile without its Mom tile underneath, ABC not the
      last page, a photo that isn't uploaded).
   1. Pictures: copies the 3D Fluent Emoji image for every icon in
-     library.js into img/ (downloaded once from npm, MIT licence), and
-     remakes the home-screen icons in icons/.
+     library.js into img/ (downloaded once from npm, MIT licence),
+     remakes the home-screen icons in icons/, and the shortcuts shown
+     when the app's icon is held (SHORTCUT_PAGES, in the manifest).
   2. Voices:   records every phrase with each natural voice below using
      Kokoro (open-source, Apache 2.0), saved as small MP3s in voices/.
      Only new or changed phrases are recorded again.
@@ -42,6 +43,32 @@ VOICES = [
 SPEED = 0.92            # a touch slower than normal speech, easier to follow
 SAMPLE_TEXT = 'Hi! This is my voice.'
 SPEED_TEXT = 'This is how fast I talk'
+
+
+def time_phrases():
+    """What the Time page's answer cards say, as phrases (index.html puts them together in the same words):
+    "The time is" + three + fifteen + "in the afternoon", "Today is Saturday" + October + eleventh, "My dad is
+    coming on Saturday", nine + "more days until Dad comes", two + "more minutes". The single words in between
+    (numbers, months, days of the month, oh, o'clock, first, then) are the ABC page's checked recordings (TIME_WORDS):
+    on their own, this voice engine often puts a stray sound in front of a short word, which tools/abc-voices.py
+    catches. Every phrase here was heard right by Whisper in Michael's voice (2026-10-11; "Dad is coming…" was
+    heard as "That is coming…", so it's "My dad"). Recorded in every voice like a tile, as voices/<voice>/_t-….mp3."""
+    days = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+    out = ['The time is', 'in the morning', 'in the afternoon', 'in the evening', 'at night']
+    out += [f'Today is {d}' for d in days]
+    for who in ('dad', 'mom'):
+        out += [f'My {who} is coming today', f'My {who} is coming tomorrow'] + [f'My {who} is coming on {d}' for d in days]
+        out += [f'more days until {who.capitalize()} comes']
+    out += ['more minutes', 'Almost done waiting', 'All done waiting!']
+    return out
+
+
+# The single words of the Time page's answers, made like the ABC page's words (every voice): see time_phrases.
+TIME_WORDS = ('January February March April May June July August September October November December '
+              'first second third fourth fifth sixth seventh eighth ninth tenth eleventh twelfth thirteenth '
+              'fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth twentieth twenty-first '
+              "twenty-second twenty-third twenty-fourth twenty-fifth twenty-sixth twenty-seventh twenty-eighth "
+              "twenty-ninth thirtieth thirty-first oh o'clock then").split()
 
 EMOJI_PKG = 'https://registry.npmjs.org/@lobehub/fluent-emoji-3d/-/fluent-emoji-3d-1.1.0.tgz'
 KOKORO_BASE = 'https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/'
@@ -111,6 +138,11 @@ def recordings(lib):
     A file is named after its tile's label; if another tile with that label says
     something else, the later one is named after its sentence instead."""
     jobs, taken, spoken = {SAMPLE_TEXT: '_sample', SPEED_TEXT: '_speed'}, {}, {}
+    for text in time_phrases():                       # the Time page's answers (no tile says them)
+        name, n = '_t-' + file_slug(text), 2
+        while name in jobs.values():                  # "First," and "first" (the 1st)
+            name, n = f'_t-{file_slug(text)}-{n}', n + 1
+        jobs[text] = name
     for t in all_tiles(lib):
         text = t.get('say') or t['label']
         if text in jobs:
@@ -223,6 +255,50 @@ def build_app_icons():
         im.save(os.path.join(ROOT, 'icons', name), optimize=True)
 
 
+# The pages offered when the app's icon is held (Android shows up to four), opening the board at that page.
+SHORTCUT_PAGES = ['I want', 'I feel', 'Ouch', 'Food']
+
+
+def build_shortcuts(lib):
+    """An icon for each shortcut (the page's picture on a circle of its colour, icons/page-<page>.png) and
+    the manifest's list of them. A page that isn't on the board is left out."""
+    from PIL import Image, ImageDraw
+    by_name = {p['name']: p for p in lib['pages']}
+    out, size = [], 192
+    for name in SHORTCUT_PAGES:
+        p = by_name.get(name)
+        if not p:
+            continue
+        drawn = p.get('img') if re.match(r'^pictures/', p.get('img') or '') else None
+        src = os.path.join(ROOT, drawn) if drawn else (lambda f: f and os.path.join(emoji_dir(), f))(emoji_file(emoji_dir(), p['icon']))
+        im = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+        col = tuple(int(p.get('color', '#3C6E9F')[i:i + 2], 16) for i in (1, 3, 5)) + (255,)
+        ImageDraw.Draw(im).ellipse([0, 0, size - 1, size - 1], fill=col)
+        if src and os.path.exists(src):
+            inner = int(size * 0.62)
+            face = Image.open(src).convert('RGBA').resize((inner, inner), Image.LANCZOS)
+            im.alpha_composite(face, ((size - inner) // 2, (size - inner) // 2))
+        rel = f'icons/page-{slug(name)}.png'
+        im.save(os.path.join(ROOT, rel), optimize=True)
+        out.append({'name': name, 'short_name': name, 'url': f'./?page={slug(name)}',
+                    'icons': [{'src': rel, 'sizes': f'{size}x{size}', 'type': 'image/png'}]})
+    return out
+
+
+def write_manifest(shortcuts):
+    """manifest.webmanifest: the shortcuts; "launch_handler", so a shortcut or sticker used while the app is
+    open turns the page in the open app instead of starting it again; and "share_target", so a photo can be
+    shared to Talanoa from the gallery. Everything else is left as it is."""
+    path = os.path.join(ROOT, 'manifest.webmanifest')
+    m = json.load(open(path, encoding='utf-8'))
+    m['shortcuts'] = shortcuts
+    m['launch_handler'] = {'client_mode': ['focus-existing', 'auto']}
+    # Share → Talanoa from the gallery: a photo for a new picture, or for one already on the board (sw.js keeps it)
+    m['share_target'] = {'action': './share-photo', 'method': 'POST', 'enctype': 'multipart/form-data',
+                         'params': {'files': [{'name': 'photo', 'accept': ['image/*']}]}}
+    open(path, 'w', encoding='utf-8', newline='\n').write(json.dumps(m, ensure_ascii=False, indent=2) + '\n')
+
+
 # ---------------------------------------------------------------- voices
 PROCESS = 'trim-start+level-v2'   # change this to force every clip to be recorded again
 
@@ -321,7 +397,8 @@ NUMBER_WORDS = ('zero one two three four five six seven eight nine ten eleven tw
 
 
 def abc_board_words(lib):
-    """Every English word on the board (labels and sentences), plus the page names and the number words."""
+    """Every English word on the board (labels and sentences), plus the page names, the number words and the
+    Time page's words (TIME_WORDS)."""
     found = {}
     texts = [p['name'] for p in lib['pages']]
     for t in all_tiles(lib):
@@ -335,6 +412,8 @@ def abc_board_words(lib):
                 found[k] = w.lower()
     for w in NUMBER_WORDS:
         found.setdefault(w, w)
+    for w in TIME_WORDS:                              # the Time page's answers: October, twenty-first, o'clock…
+        found.setdefault(abc_key(w), w.lower())
     return found                                      # key -> spoken form ("dont" -> "don't")
 
 
@@ -399,6 +478,8 @@ def write_sw(pictures, photo_files):
     staff guide, because the version is a hash of everything on the list."""
     shell = ['index.html', 'credits.html', 'print.html', 'library.js', 'assets.js', 'manifest.webmanifest',
              'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-512-maskable.png']
+    shell += sorted('icons/' + f for f in os.listdir(os.path.join(ROOT, 'icons')) if f.startswith('page-'))   # shortcut icons
+    shell += [f for f in ('lib/qrcode.js', 'lib/jsQR.js') if os.path.isfile(os.path.join(ROOT, f))]          # QR stickers: print, scan
     precache = shell + sorted(set(pictures.values())) + photo_files
     if os.path.isfile(os.path.join(ROOT, 'abc-rank.txt')):
         precache.append('abc-rank.txt')        # the ABC page's word suggestions (tools/abc-rank.py)
@@ -416,9 +497,11 @@ def main():
     check_abc_last(lib)
     photo_files = photos(lib)
     jobs, spoken = recordings(lib)
-    print(f'{len(lib["pages"])} pages, {len(all_tiles(lib))} tiles, {len(jobs) - 2} different sentences')
+    print(f'{len(lib["pages"])} pages, {len(all_tiles(lib))} tiles, {len(jobs) - 2 - len(time_phrases())} different sentences'
+          f' (+ {len(time_phrases())} for the Time page\'s answers)')
     pictures = build_pictures(lib)
     build_app_icons()
+    write_manifest(build_shortcuts(lib))
     clips = build_voices(jobs, spoken)
     write_outputs(lib, pictures, clips, photo_files)
     import manual

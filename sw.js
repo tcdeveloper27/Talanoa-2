@@ -4,9 +4,10 @@
    Everything the board needs is kept on the phone, so it keeps working with no
    internet. Voice clips go in their own cache ("tt2-voices") that survives app
    updates; the page fills it for whichever voice is selected. */
-var VERSION = 'cb54640bfcde';
+var VERSION = '45f7bdb578ae';
 var CACHE = 'tt2-app-' + VERSION;
 var VOICE_CACHE = 'tt2-voices';
+var SHARE_CACHE = 'tt2-share';       /* a photo shared to Talanoa, until the page picks it up */
 var PRECACHE = [
  "./",
  "index.html",
@@ -18,8 +19,15 @@ var PRECACHE = [
  "icons/icon-192.png",
  "icons/icon-512.png",
  "icons/icon-512-maskable.png",
+ "icons/page-food.png",
+ "icons/page-i-feel.png",
+ "icons/page-i-want.png",
+ "icons/page-ouch.png",
+ "lib/qrcode.js",
+ "lib/jsQR.js",
  "img/1f1f9-1f1f4.webp",
  "img/1f300.webp",
+ "img/1f305.webp",
  "img/1f319.webp",
  "img/1f321-fe0f.webp",
  "img/1f333.webp",
@@ -54,6 +62,7 @@ var PRECACHE = [
  "img/1f3f7-fe0f.webp",
  "img/1f40d.webp",
  "img/1f415.webp",
+ "img/1f422.webp",
  "img/1f434.webp",
  "img/1f437.webp",
  "img/1f440.webp",
@@ -86,9 +95,11 @@ var PRECACHE = [
  "img/1f4b5.webp",
  "img/1f4bb.webp",
  "img/1f4c5.webp",
+ "img/1f4c6.webp",
  "img/1f4d6.webp",
  "img/1f4da.webp",
  "img/1f4de.webp",
+ "img/1f4e3.webp",
  "img/1f4f7.webp",
  "img/1f4fa.webp",
  "img/1f500.webp",
@@ -97,6 +108,7 @@ var PRECACHE = [
  "img/1f50c.webp",
  "img/1f50d.webp",
  "img/1f524.webp",
+ "img/1f550.webp",
  "img/1f552.webp",
  "img/1f576-fe0f.webp",
  "img/1f57a.webp",
@@ -203,6 +215,7 @@ var PRECACHE = [
  "img/261d-fe0f.webp",
  "img/2705.webp",
  "img/270b.webp",
+ "img/274c.webp",
  "img/2753.webp",
  "img/2764-fe0f.webp",
  "img/2795.webp",
@@ -235,6 +248,13 @@ var PRECACHE = [
  "manual/img/editor.webp",
  "manual/img/abc.webp",
  "manual/img/page-body.webp",
+ "manual/img/card-visit.webp",
+ "manual/img/card-timer.webp",
+ "manual/img/model.webp",
+ "manual/img/scene.webp",
+ "manual/img/story.webp",
+ "manual/img/stickers.webp",
+ "manual/img/scan.webp",
  "manual/img/settings-top.webp",
  "manual/img/settings-mid.webp",
  "manual/img/settings-bottom.webp",
@@ -284,9 +304,22 @@ function slice(req, res) {
 
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  /* A photo shared to Talanoa from the gallery (the manifest's "share_target"): keep it, then open the
+     app, which offers to make a new picture with it or put it on one already on the board. */
+  if (req.method === 'POST' && /\/share-photo$/.test(url.pathname)) {
+    e.respondWith(req.formData().then(function (form) {
+      var f = form.get('photo');
+      if (!f || !f.size) return null;
+      return caches.open(SHARE_CACHE).then(function (c) {
+        return c.put('shared-photo', new Response(f, { headers: { 'Content-Type': f.type || 'image/jpeg' } }));
+      });
+    }).catch(function () {}).then(function () { return Response.redirect('./?shared=1', 303); }));
+    return;
+  }
+  if (req.method !== 'GET') return;
 
   if (url.pathname.indexOf('/voices/') !== -1) {
     /* Fetch the whole clip once (never a partial), keep it, then serve the range asked for. */

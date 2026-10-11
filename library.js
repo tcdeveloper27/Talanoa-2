@@ -38,6 +38,14 @@
              by ear; the tile's own recording is the fallback.
      show  = true: also shows the words full screen, big enough to
              hand the phone to someone
+     chime = true: a two-note chime and a soft flash come first, so
+             people turn to look before the words start (Hey!)
+     shows = after the words, a card with the answer opens (the Time
+             page): "clock" (the time), "date" (today), "visit-dad" /
+             "visit-mom" (counting down to the visit set in Settings →
+             Visits), "timer" (the wait timer, if one is running),
+             "next" (First / Then, if staff have set one). With nothing
+             to show (no visit set, say), just the words are said.
      card  = true: printed as the cut-out "About me" card on the
              cover of the paper board (print.html)
      means = a translation, shown small under the label and in the
@@ -353,6 +361,36 @@ window.TT_LIBRARY = {
       {"icon": "🚫", "label": "Not",       "say": "Not"},
       {"icon": "🔀", "label": "Different", "say": "Different"},
       {"icon": "✅", "label": "Finished",  "say": "Finished"}
+    ]},
+
+    {"name": "Hey", "icon": "📣", "color": "#E64A19", "tiles": [
+      {"icon": "📣", "label": "Hey!",        "say": "Hey!", "chime": true},
+      {"icon": "🙋", "label": "Excuse me",   "say": "Excuse me", "chime": true},
+      {"icon": "⏳", "label": "Please wait", "say": "Please wait. I'm finding my words.", "show": true},
+      {"icon": "👂", "label": "Listen",      "say": "Listen to me, please"},
+      {"icon": "🐢", "label": "Slow down",   "say": "Please slow down"},
+      {"icon": "🔁", "label": "Say it again", "say": "Can you say that again?"},
+      {"icon": "🤷", "label": "Don't understand", "short": "Don't get it", "say": "I don't understand"},
+      {"icon": "❌", "label": "Not right",   "say": "That's not what I meant"},
+      {"icon": "➕", "label": "Not finished", "say": "I'm not finished"},
+      {"icon": "☝️", "label": "Yes or no",   "say": "Ask me a yes or no question"},
+      {"icon": "👉", "label": "Show me",     "say": "Show me, please"},
+      {"icon": "🙏", "label": "Thank you",   "say": "Thank you for listening"}
+    ]},
+
+    {"name": "Time", "icon": "🕒", "color": "#00838F", "tiles": [
+      {"icon": "🕒", "label": "What time?",  "say": "What time is it?", "shows": "clock"},
+      {"icon": "📅", "label": "What day?",   "say": "What day is it?", "shows": "date"},
+      {"icon": "👨", "label": "Dad coming?", "say": "When is Dad coming?", "shows": "visit-dad"},
+      {"icon": "⏳", "label": "How long?",   "say": "How long do I have to wait?", "shows": "timer"},
+      {"icon": "⏭️", "label": "What's next?", "say": "What are we doing next?", "shows": "next"},
+      {"icon": "⏰", "label": "Now",         "say": "Now, please"},
+      {"icon": "👩", "label": "Mom coming?", "say": "When is Mom coming?", "shows": "visit-mom"},
+      {"icon": "🕐", "label": "Later",       "say": "Later"},
+      {"icon": "🌅", "label": "Morning",     "say": "In the morning"},
+      {"icon": "☀️", "label": "Afternoon",   "say": "This afternoon"},
+      {"icon": "🌙", "label": "Tonight",     "say": "Tonight"},
+      {"icon": "📆", "label": "Tomorrow",    "say": "Tomorrow"}
     ]},
 
     {"name": "ABC", "icon": "🔤", "color": "#3A3A3A", "keyboard": true, "tiles": []}

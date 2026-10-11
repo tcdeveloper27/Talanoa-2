@@ -108,18 +108,18 @@ def main():
     sw = boxes['s_voice']['sheetW']
     def mid(a, b):
         return math.floor((boxes[a]['y'] + boxes[a]['height'] + boxes[b]['y']) / 2 + 0.5)   # JavaScript's Math.round
-    cuts = [0, mid('s_vol', 's_pages'), mid('s_screen', 's_own'), boxes['s_pages']['sheetH']]
+    cuts = [0, mid('s_loud', 's_pages'), mid('s_screen', 's_own'), boxes['s_pages']['sheetH']]
     def sat(name, part):
         r = boxes[name]
         y = r['y'] + min(r['height'] / 2, 22) - cuts[part]
         return pct(sw - 16, sw), pct(y, cuts[part + 1] - cuts[part])
     def row(part, *pairs):
         return ''.join(badge(letter, *sat(name, part)) for letter, name in pairs)
-    top_badges = row(0, ('A', 's_voice'), ('B', 's_speed'), ('C', 's_vol'))
-    mid_badges = row(1, ('D', 's_pages'), ('E', 's_find'), ('F', 's_swipe'), ('G', 's_fx'), ('H', 's_calm'), ('I', 's_big'),
-                     ('J', 's_strong'), ('K', 's_sent'), ('L', 's_screen'))
-    bottom_badges = row(2, ('M', 's_ownbtn'), ('N', 's_backup'), ('O', 's_counts'), ('P', 's_counton'),
-                        ('Q', 's_status'), ('R', 's_update'), ('S', 's_links'))
+    top_badges = row(0, ('A', 's_tools'), ('B', 's_voice'), ('C', 's_speed'), ('D', 's_vol'), ('E', 's_loud'))
+    mid_badges = row(1, ('F', 's_pages'), ('G', 's_find'), ('H', 's_swipe'), ('I', 's_stickers'), ('J', 's_scan'), ('K', 's_fx'),
+                     ('L', 's_calm'), ('M', 's_big'), ('N', 's_strong'), ('O', 's_sent'), ('P', 's_visits'), ('Q', 's_screen'))
+    bottom_badges = row(2, ('R', 's_ownbtn'), ('S', 's_backup'), ('T', 's_counts'), ('U', 's_counton'),
+                        ('V', 's_status'), ('W', 's_update'), ('X', 's_links'))
 
     # the Talk page, About me and the Tongan words, straight from library.js
     talk = next((p for p in lib['pages'] if p['name'] == 'Talk'), {'tiles': []})
@@ -127,6 +127,10 @@ def main():
                           for t in tiles(talk))
     about = next((t for t in lib['core'] + [t for p in lib['pages'] for t in tiles(p)] if t.get('card')), None)
     tongan = next((p for p in lib['pages'] if p['name'] == 'Tongan'), {'tiles': []})
+    # the Hey page's words for fixing a mix-up (after Hey!, Excuse me and Please wait, which the guide describes itself)
+    hey = next((p for p in lib['pages'] if p['name'] == 'Hey'), {'tiles': []})
+    hey_rest = [t for t in tiles(hey) if not t.get('chime') and not t.get('show')]
+    hey_list = ', '.join(f'<b>{html.escape(t["label"])}</b> (“{html.escape(t.get("say") or t["label"])}”)' for t in hey_rest)
     tongan_list = ', '.join(f'<b>{html.escape(t["label"])}</b> ({html.escape(t.get("means", ""))})' for t in tiles(tongan))
 
     # the Body and Sick pages, side by side
@@ -153,6 +157,7 @@ def main():
               .replace('{{HEALTH_ROWS}}', health_rows)
               .replace('{{ABOUT_ME}}', html.escape(about['say']) if about else '')
               .replace('{{TONGAN_LIST}}', tongan_list)
+              .replace('{{HEY_LIST}}', hey_list)
               .replace('{{QR}}', qr_svg(APP_URL))
               .replace('{{APP_URL}}', APP_URL))
     left = re.findall(r'\{\{[A-Z_]+\}\}', out)

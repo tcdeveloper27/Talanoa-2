@@ -69,6 +69,18 @@
   .card small{display:block;text-align:right;font-size:1.7cqw;color:#8B5A2B;margin-top:1cqw;}
   .list{columns:3;column-gap:4cqw;font-size:2.2cqw;line-height:1.45;margin:0;padding-left:4cqw;}
 
+  /* page stickers: six per sheet, each with the page's QR code (print.html?stickers=1) */
+  .stk{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:2.4cqw;}
+  .st{border:.7cqw solid var(--pc);border-radius:3cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqw;padding:1.4cqw;min-height:0;}
+  .st .nm{display:flex;align-items:center;gap:1.4cqw;font-size:4.4cqw;font-weight:900;line-height:1.05;}
+  .st .nm img,.st .nm .em{width:6.4cqw;height:6.4cqw;object-fit:contain;font-size:5cqw;line-height:6.4cqw;text-align:center;}
+  .st svg{width:21cqw;height:21cqw;flex:none;}
+  .st small{font-size:1.75cqw;color:#5A4632;text-align:center;line-height:1.25;}
+  .st.empty{border:none;}
+  .choose{max-width:8.5in;margin:8px auto 0;padding:0 14px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px;}
+  .choose label{display:flex;align-items:center;gap:5px;}
+  @media print{.choose{display:none;}}
+
   @page{size:letter;margin:.3in;}
   @media print{
     body{background:#fff;}
@@ -89,6 +101,7 @@
 
 <script src="library.js"></script>
 <script src="assets.js"></script>
+<script src="lib/qrcode.js"></script>
 <script>
 var LIB = window.TT_LIBRARY || {core: [], pages: []};
 var ASSETS = window.TT_ASSETS || {img: {}};
@@ -109,7 +122,26 @@ function readable(hex){
   return mix(hex, '#000000', .6);
 }
 function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-var own = {};
+var own = {}, mine = [];
+/* The pages: the board's, then the pages of pictures made on this phone (Settings → Make a new picture), then ABC, as on the phone. */
+var PAGES = LIB.pages.slice();
+function addMine(){
+  var tiles = mine.filter(function(r){ return r.kind === 'tile' && r.label; });
+  var made = mine.filter(function(r){ return r.kind === 'page' && (r.type || 'tiles') === 'tiles'; }).sort(function(a, b){ return (a.order || 0) - (b.order || 0); }).map(function(pr){
+    var id = pr.key.slice(pr.key.indexOf('|') + 1), p = {name: pr.name, icon: '📌', color: pr.color || '#00897B', _key: 'my-' + id, tiles: []};
+    for (var i = 0; i < 12; i++) p.tiles.push(null);
+    tiles.filter(function(t){ return t.page === id; }).forEach(function(t){
+      var at = t.pos >= 0 && t.pos < 12 && !p.tiles[t.pos] ? t.pos : p.tiles.indexOf(null);
+      if (at >= 0) p.tiles[at] = {label: t.label, say: t.say || '', icon: t.icon || '🖼️', _key: t.key};
+    });
+    var first = p.tiles.filter(Boolean)[0];
+    if (!first) return null;
+    p.icon = first.icon;
+    return p;
+  }).filter(Boolean);
+  var kb = PAGES.filter(function(p){ return p.keyboard; });
+  PAGES = PAGES.filter(function(p){ return !p.keyboard; }).concat(made, kb);
+}
 function pic(item, key){
   var box = el('div', 'pic'), photo = (own[key] && own[key].photo) || item.img, src = photo || ASSETS.img[item.icon];
   if (src){ var im = el('img'); im.alt = ''; im.src = src; if (photo && !/^pictures\//.test(photo)) im.className = 'photo'; box.appendChild(im); }
@@ -154,7 +186,7 @@ function pageSheet(p, n, total){
   for (var i = 0; i < 12; i++){
     var t = p.tiles[i];
     if (blank(t)){ g.appendChild(el('div', 'tile slot')); continue; }
-    var d = el('div', 'tile'), key = p.name + '|' + t.label;
+    var d = el('div', 'tile'), key = t._key || p.name + '|' + t.label;
     d.appendChild(pic(t, key));
     d.appendChild(el('div', 'lab', t.short && t.label.indexOf(' ') < 0 ? t.short : t.label));   /* one long word: its short form (Faka-molemole) breaks better */
     if (t.means) d.appendChild(el('div', 'says', t.means));
@@ -194,8 +226,8 @@ function cover(total){
   s.appendChild(ul2);
   s.appendChild(el('h2', '', 'The ' + (total - 1) + ' pages'));
   var ol = el('ol', 'list');
-  ol.style.columns = String(Math.max(3, Math.ceil(LIB.pages.length / 6)));   /* at most 6 lines, so the About me card fits */
-  LIB.pages.forEach(function(p){ ol.appendChild(el('li', '', p.name)); });
+  ol.style.columns = String(Math.max(3, Math.ceil(PAGES.length / 6)));   /* at most 6 lines, so the About me card fits */
+  PAGES.forEach(function(p){ ol.appendChild(el('li', '', p.name)); });
   s.appendChild(ol);
   var me = null;                          /* the tile marked "card": true (the top row's "Hi, I'm Brenton") */
   LIB.core.concat.apply(LIB.core.slice(), LIB.pages.map(function(p){ return p.tiles; }))
@@ -208,21 +240,72 @@ function cover(total){
   }
   return s;
 }
+/* print.html?stickers=1: a QR sticker for each page (Settings → Page stickers). Scanning one in Talanoa
+   (tap the page name, then 📷), or with the phone's camera, opens the board at that page. */
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+function qrSvg(text){
+  var q = qrcode(0, 'M'); q.addData(text); q.make();
+  var box = el('div'); box.innerHTML = q.createSvgTag({cellSize: 4, margin: 16, scalable: true});   /* 4 squares of white all round */
+  return box.firstChild;
+}
+function sticker(p){
+  var s = el('div', 'st'), url = new URL('./?page=' + (p._key || slug(p.name)), location.href).href;
+  s.style.setProperty('--pc', readable(p.color || '#3C6E9F'));
+  var nm = el('div', 'nm'); nm.appendChild(icon(p)); nm.appendChild(el('span', '', p.name)); s.appendChild(nm);
+  var svg = qrSvg(url); svg.setAttribute('aria-label', 'QR code: Talanoa, ' + p.name + ' page'); s.appendChild(svg);
+  s.appendChild(el('small', '', 'Talanoa: tap the page name, then 📷 Scan a sticker'));
+  return s;
+}
+function stickerSheets(box){
+  var want = PAGES.filter(function(p){ return !STICK_OFF[p.name]; }), per = 6, sheets = Math.max(1, Math.ceil(want.length / per));
+  box.innerHTML = '';
+  for (var n = 0; n < sheets; n++){
+    var s = el('section', 'sheet'), h = el('div', 'head');
+    h.style.setProperty('--strong', '#6B4423');
+    h.appendChild(el('span', 'em', '🏷️')); h.appendChild(el('b', '', 'Page stickers')); h.appendChild(el('small', '', 'sheet ' + (n + 1) + ' of ' + sheets));
+    s.appendChild(h);
+    var g = el('div', 'stk');
+    for (var i = 0; i < per; i++){ var p = want[n * per + i]; g.appendChild(p ? sticker(p) : el('div', 'st empty')); }
+    s.appendChild(g);
+    s.appendChild(foot('Cut them out, laminate them, and stick each one where it’s needed: Food by the fridge, Places by the door.'));
+    box.appendChild(s);
+  }
+}
+var STICK_OFF = {};
+function stickerChooser(box){
+  var tip = document.querySelector('.tip'), c = el('div', 'choose');
+  tip.textContent = ''; tip.appendChild(el('b', '', 'A QR sticker for each page.'));
+  tip.appendChild(document.createTextNode(' Untick the pages you don’t need, then print. Scan one in Talanoa (tap the page name at the top, then 📷 Scan a sticker) to open the board at that page. The phone’s own camera can scan them too.'));
+  PAGES.forEach(function(p){
+    var l = el('label'), cb = el('input'); cb.type = 'checkbox'; cb.checked = true;
+    cb.addEventListener('change', function(){ STICK_OFF[p.name] = !cb.checked; stickerSheets(box); });
+    l.appendChild(cb); l.appendChild(document.createTextNode(p.name)); c.appendChild(l);
+  });
+  tip.parentNode.insertBefore(c, tip.nextSibling);
+}
+
 /* print.html?pages=Ouch,Body,Sick prints just those pages, no cover (Settings → Health pages to print) */
 var ONLY = (new URLSearchParams(location.search).get('pages') || '').split(',').filter(Boolean);
+var STICKERS = new URLSearchParams(location.search).has('stickers');
 function build(){
-  var box = document.getElementById('sheets'), total = LIB.pages.length + 1;
-  var some = LIB.pages.filter(function(p){ return ONLY.indexOf(p.name) >= 0; });
+  var box = document.getElementById('sheets'), total = PAGES.length + 1;
+  if (STICKERS){
+    document.title = 'Talanoa page stickers'; document.querySelector('.bar .t').textContent = 'Page stickers';
+    stickerChooser(box); stickerSheets(box);
+    window.TT_PRINT_READY = true;
+    return;
+  }
+  var some = PAGES.filter(function(p){ return ONLY.indexOf(p.name) >= 0; });
   if (some.length){
     var names = some.map(function(p){ return p.name; }), list = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
     document.title = 'Talanoa: ' + names.join(', ');
     var tip = document.querySelector('.tip'), b = el('b', '', 'Just the ' + list + ' pages,');
     tip.textContent = ''; tip.appendChild(b);
     tip.appendChild(document.createTextNode(' in the same colours and spots as on the phone. Print them for doctor and hospital visits, and keep a set in his bag.'));
-    some.forEach(function(p){ var n = LIB.pages.indexOf(p) + 1; box.appendChild(p.keyboard ? abcSheet(p, n, LIB.pages.length) : pageSheet(p, n, LIB.pages.length)); });
+    some.forEach(function(p){ var n = PAGES.indexOf(p) + 1; box.appendChild(p.keyboard ? abcSheet(p, n, PAGES.length) : pageSheet(p, n, PAGES.length)); });
   } else {
     box.appendChild(cover(total));
-    LIB.pages.forEach(function(p, i){ box.appendChild(p.keyboard ? abcSheet(p, i + 1, LIB.pages.length) : pageSheet(p, i + 1, LIB.pages.length)); });   /* the phone's page numbers */
+    PAGES.forEach(function(p, i){ box.appendChild(p.keyboard ? abcSheet(p, i + 1, PAGES.length) : pageSheet(p, i + 1, PAGES.length)); });   /* the phone's page numbers */
   }
   window.TT_PRINT_READY = true;
 }
@@ -234,14 +317,14 @@ function loadOwn(){
       r.onupgradeneeded = function(){ r.result.createObjectStore('mine', {keyPath: 'key'}); };
       r.onsuccess = function(){
         var q = r.result.transaction('mine', 'readonly').objectStore('mine').getAll();
-        q.onsuccess = function(){ q.result.forEach(function(x){ if (x.photo) own[x.key] = {photo: URL.createObjectURL(x.photo)}; }); clearTimeout(done); ok(); };
+        q.onsuccess = function(){ q.result.forEach(function(x){ if (x.photo) own[x.key] = {photo: URL.createObjectURL(x.photo)}; if (x.kind) mine.push(x); }); clearTimeout(done); ok(); };
         q.onerror = function(){ clearTimeout(done); ok(); };
       };
       r.onerror = function(){ clearTimeout(done); ok(); };
     } catch(e){ ok(); }
   });
 }
-loadOwn().then(build);
+loadOwn().then(function(){ addMine(); build(); });
 </script>
 </body>
 </html>

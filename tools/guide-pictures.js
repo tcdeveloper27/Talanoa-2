@@ -161,11 +161,16 @@ function serve() {
     const h3 = (t) => [...document.querySelectorAll('#panel h3')].find((h) => h.textContent === t);
     const lab = (id) => document.getElementById(id).closest('label');
     return {
-      s_voice: R(document.getElementById('voiceList')), s_speed: R(document.getElementById('speed')), s_vol: R(document.getElementById('vol')),
+      s_tools: R(document.getElementById('tools')),
+      s_voice: R(document.getElementById('voiceList')), s_speed: R(document.getElementById('speed')), s_vol: R(document.getElementById('vol')), s_loud: R(lab('loudOn')),
       s_pages: R(h3('Pages to show'), document.getElementById('pageList')), s_find: R(h3('Find a word'), document.getElementById('findBox')), s_swipe: R(lab('swipeOn')),
+      s_stickers: R(h3('Page stickers (QR and NFC)'), document.querySelector('#panel a[href="print.html?stickers=1"]')),
+      s_scan: R(h3('Scanning (if tapping a picture is hard)'), lab('scanOn')),
       s_fx: R(document.getElementById('fxList')), s_calm: R(lab('calmOn')), s_big: R(lab('bigOn')), s_strong: R(lab('strongOn')),
-      s_sent: R(h3('Talking in sentences'), lab('recentOn')), s_screen: R(h3('Screen'), lab('roomOn')),
-      s_own: R(h3('Photos and voices')), s_ownbtn: R(document.getElementById('ownOpen')), s_backup: R(document.getElementById('ownSave').parentNode),
+      s_sent: R(h3('Talking in sentences'), lab('recentOn')), s_visits: R(h3('Visits (the Time page)'), document.getElementById('visit-mom')),
+      s_screen: R(h3('Screen'), lab('awakeOn')),
+      s_own: R(h3('Photos and voices')), s_ownbtn: R(document.getElementById('ownOpen'), document.getElementById('ownScene').parentNode),
+      s_backup: R(document.getElementById('ownSave').parentNode, document.getElementById('backupStat')),
       s_counts: R(document.getElementById('countSpan'), document.getElementById('unusedBox')), s_counton: R(lab('countOn'), document.getElementById('countClear')),
       s_status: R(document.getElementById('offlineStat')), s_update: R(document.getElementById('checkUpdate')),
       s_links: R(document.querySelector('#panel a[href="manual/"]'), document.querySelector('#panel a[href="credits.html"]')),
@@ -175,7 +180,7 @@ function serve() {
   Object.assign(boxes, S);
   // cut halfway between two sections, so no slider or option is cut in two (tools/manual.py cuts in the same places)
   const mid = (a, b) => Math.round((a.y + a.height + b.y) / 2);
-  const cuts = [0, mid(S.s_vol, S.s_pages), mid(S.s_screen, S.s_own), sheet.height];
+  const cuts = [0, mid(S.s_loud, S.s_pages), mid(S.s_screen, S.s_own), sheet.height];
   for (const [i, name] of [[0, 'settings-top.webp'], [1, 'settings-mid.webp'], [2, 'settings-bottom.webp']])
     await webp(await page.screenshot({ clip: { x: sheet.x, y: sheet.y + cuts[i], width: sheet.width, height: cuts[i + 1] - cuts[i] } }), name);
 
@@ -189,6 +194,65 @@ function serve() {
   const ed = await box('#editor .sheet');
   await webp(await page.screenshot({ clip: { x: ed.x, y: ed.y, width: ed.width, height: ed.height } }), 'editor.webp');
   await page.evaluate(() => { closeEditor(); closeChooser(); });
+
+  // 10. the October 2026 additions (section 13-16), back at phone size
+  await page.setViewportSize(PHONE);
+  await page.waitForTimeout(300);
+  await page.evaluate(() => { speechSynthesis.speak = () => {}; });
+  // the Time page's Dad coming?, with a visit in three days
+  await page.evaluate(() => { const d = new Date(); d.setDate(d.getDate() + 3); store('tt2_visit_dad', JSON.stringify({date: dayStr(d), weekly: false})); });
+  await goTo('Time');
+  await tap('#stage .tile', await page.evaluate(() => [...document.querySelectorAll('#stage .tile')].findIndex((t) => t._item.label === 'Dad coming?')));
+  await webp(await page.screenshot(), 'card-visit.webp');
+  await page.evaluate(() => { closeCard(); store('tt2_visit_dad', ''); });
+  // the wait timer, with Toy Story after it
+  await page.evaluate(() => { const t = LIB.pages.find((p) => p.name === 'Toy Story').tiles[0]; startTimer(5, t._key); TIMER.end = Date.now() + 4.5 * 60000; saveTimer(); drawTimer(); });
+  await webp(await page.screenshot(), 'card-timer.webp');
+  await page.evaluate(() => stopTimer());
+  // modelling: the purple bar, and a hint on Hug
+  await goTo('I want');
+  await page.evaluate(() => setModelling(true));
+  await tap('#stage .tile', await tileIndex('Drink'));
+  await page.evaluate(() => { hintArmed = true; document.getElementById('modelHint').classList.add('armed'); });
+  await tap('#stage .tile', await tileIndex('Hug'));
+  await page.evaluate(() => document.getElementById('modelHint').classList.add('armed'));    /* as just tapped, for the picture */
+  await webp(await page.screenshot(), 'model.webp');
+  await page.evaluate(() => { setModelling(false); litItem = null; lightUp(); said.textContent = HINT; document.querySelectorAll('.hint').forEach((e) => e.classList.remove('hint')); });
+  // a scene (a room drawn from the board's own pictures: no real photos in the guide) and a story, made as staff would,
+  // then deleted again, so the paper board printed below is the board's own
+  const madeKeys = await page.evaluate(async () => {
+    const c = document.createElement('canvas'); c.width = 900; c.height = 1400; const x = c.getContext('2d');   /* upright, like a phone photo */
+    x.fillStyle = '#E8DCC4'; x.fillRect(0, 0, 900, 820); x.fillStyle = '#B98E5E'; x.fillRect(0, 820, 900, 580);
+    x.fillStyle = '#8D6E63'; x.fillRect(660, 300, 200, 520); x.fillStyle = '#5D4037'; x.beginPath(); x.arc(830, 580, 12, 0, 7); x.fill();
+    const draw = (e, px, py, size) => new Promise((ok) => { const im = new Image(); im.onload = () => { x.drawImage(im, px, py, size, size); ok(); }; im.onerror = ok; im.src = ASSETS.img[e]; });
+    await draw('📺', 120, 330, 330); await draw('🛏️', 40, 820, 520); await draw('🧸', 610, 980, 220);
+    const photo = await new Promise((ok) => c.toBlob(ok, 'image/jpeg', 0.85));
+    const tile = (page, label) => LIB.pages.find((p) => p.name === page).tiles.find((t) => t.label === label)._key;
+    const scene = {key: 'mypage|guidescene', kind: 'page', type: 'scene', name: 'My room', order: 1, size: 'm', words: true, color: '#00897B',
+      spots: [{id: 'g1', x: 0.33, y: 0.76, ref: tile('I want', 'Rest')}, {id: 'g2', x: 0.32, y: 0.36, ref: tile('Fun', 'Cartoons')},
+              {id: 'g3', x: 0.84, y: 0.4, ref: tile('I want', 'Outside')}, {id: 'g4', x: 0.8, y: 0.78, ref: tile('Fun', 'Toys')}]};
+    await putMine(scene); await saveOwn('mypage|guidescene', {photo: photo});
+    const story = {key: 'mypage|guidestory', kind: 'page', type: 'story', name: 'Going for a ride', order: 2, color: '#5C6BC0',
+      steps: [{id: 's1', text: 'We get in the car', icon: '🚗'}, {id: 's2', text: 'We stop at Maverik', icon: '🏪'}, {id: 's3', text: 'I get a drink', icon: '🥤'}]};
+    await putMine(story); rebuildBoard();
+    return ['mypage|guidescene', 'mypage|guidestory'];
+  });
+  await goTo('My room'); await page.waitForTimeout(400);
+  await tap('#stage .spot', 0);
+  await webp(await page.screenshot(), 'scene.webp');
+  await calm(); await page.evaluate(() => { litItem = null; lightUp(); said.textContent = HINT; });
+  await goTo('Going for a ride');
+  await page.evaluate(() => { storyAt[pages[current].key] = 1; render(''); });
+  await tap('#stage .storypic', 0);
+  await webp(await page.screenshot(), 'story.webp');
+  await calm();
+  await page.evaluate((keys) => deleteKeys(keys), madeKeys);
+  await page.evaluate(() => { litItem = null; lightUp(); said.textContent = HINT; });
+  // scanning: the orange frame on one picture
+  await goTo('I want');
+  await page.evaluate(() => { SCAN_MS = 60000; setScan(true); scanStep(); scanStep(); scanStep(); clearInterval(scanT2); });
+  await webp(await page.screenshot(), 'scan.webp');
+  await page.evaluate(() => setScan(false));
 
   fs.writeFileSync(path.join(ROOT, 'manual', 'boxes.json'), JSON.stringify(boxes, null, 1) + '\n');
   console.log('  manual/boxes.json');
@@ -218,11 +282,22 @@ function serve() {
   await paper.emulateMedia({ media: 'print' });
   await paper.pdf({ path: path.join(ROOT, 'manual', 'Talanoa-Paper-Board.pdf'), preferCSSPageSize: true, printBackground: true });
   console.log('  manual/Talanoa-Paper-Board.pdf');
+  // the QR page stickers: one sheet, for the guide
+  await paper.goto(URL0 + 'print.html?stickers=1', { waitUntil: 'networkidle' });
+  await paper.waitForFunction(() => window.TT_PRINT_READY && [...document.images].every((i) => i.complete), null, { timeout: 20000 });
+  await paper.emulateMedia({ media: 'screen' });
+  await paper.addStyleTag({ content: '.bar{display:none !important}' });
+  const stickerSheet = await paper.evaluate(() => { const s = document.querySelector('.sheet'); s.scrollIntoView(); const r = s.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; });
+  await webp(await paper.screenshot({ clip: stickerSheet }), 'stickers.webp');
+  await paper.emulateMedia({ media: 'print' });
   // ... and just the health pages, for doctor visits (Settings → Health pages to print)
   await paper.goto(URL0 + 'print.html?pages=Ouch,Body,Sick', { waitUntil: 'networkidle' });
   await paper.waitForFunction(() => window.TT_PRINT_READY && [...document.images].every((i) => i.complete), null, { timeout: 20000 });
   await paper.pdf({ path: path.join(ROOT, 'manual', 'Talanoa-Health-Pages.pdf'), preferCSSPageSize: true, printBackground: true });
   console.log('  manual/Talanoa-Health-Pages.pdf');
+  // the paper board's and the stickers' pictures (paper.webp, stickers.webp) are made just above, after the guide: once more,
+  // so the offline list has them too (2026-10-11: on a first run stickers.webp was missing offline)
+  execFileSync(process.env.PYTHON || 'python3', [path.join(ROOT, 'tools', 'build.py'), '--offline-list'], { stdio: 'inherit' });
 
   await browser.close();
   server.close();
