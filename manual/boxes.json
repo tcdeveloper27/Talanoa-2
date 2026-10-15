@@ -63,7 +63,7 @@
   "width": 560,
   "height": 148.1875,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_voice": {
   "x": 20,
@@ -71,7 +71,7 @@
   "width": 560,
   "height": 448,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_speed": {
   "x": 22,
@@ -79,7 +79,7 @@
   "width": 560,
   "height": 32,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_vol": {
   "x": 22,
@@ -87,7 +87,7 @@
   "width": 560,
   "height": 32,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_loud": {
   "x": 20,
@@ -95,7 +95,7 @@
   "width": 560,
   "height": 62,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_pages": {
   "x": 20,
@@ -103,7 +103,7 @@
   "width": 560,
   "height": 428,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_find": {
   "x": 20,
@@ -111,7 +111,7 @@
   "width": 560,
   "height": 77,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_swipe": {
   "x": 20,
@@ -119,7 +119,7 @@
   "width": 560,
   "height": 52,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_stickers": {
   "x": 20,
@@ -127,7 +127,7 @@
   "width": 560,
   "height": 145.53125,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_scan": {
   "x": 20,
@@ -135,7 +135,7 @@
   "width": 560,
   "height": 90,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_fx": {
   "x": 20,
@@ -143,7 +143,7 @@
   "width": 560,
   "height": 163,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_calm": {
   "x": 20,
@@ -151,7 +151,7 @@
   "width": 560,
   "height": 81,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_big": {
   "x": 20,
@@ -159,7 +159,7 @@
   "width": 560,
   "height": 62,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_strong": {
   "x": 20,
@@ -167,102 +167,102 @@
   "width": 560,
   "height": 62,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_sent": {
   "x": 20,
   "y": 2513.40625,
   "width": 560,
-  "height": 338,
+  "height": 357,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_visits": {
   "x": 20,
-  "y": 2873.40625,
+  "y": 2892.40625,
   "width": 560,
   "height": 205.6875,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_screen": {
   "x": 20,
-  "y": 3101.09375,
+  "y": 3120.09375,
   "width": 560,
   "height": 257.84375,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_own": {
   "x": 20,
-  "y": 3380.9375,
+  "y": 3399.9375,
   "width": 560,
   "height": 20,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_ownbtn": {
   "x": 20,
-  "y": 3475.46875,
+  "y": 3494.46875,
   "width": 560,
   "height": 169,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_backup": {
   "x": 20,
-  "y": 3687.3125,
+  "y": 3706.3125,
   "width": 560,
   "height": 51,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_counts": {
   "x": 20,
-  "y": 3826,
+  "y": 3845,
   "width": 560,
   "height": 560.84375,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_counton": {
   "x": 20,
-  "y": 4398.84375,
+  "y": 4417.84375,
   "width": 560,
   "height": 266,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_status": {
   "x": 20,
-  "y": 4728.84375,
+  "y": 4747.84375,
   "width": 560,
   "height": 35,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_update": {
   "x": 20,
-  "y": 4813.84375,
+  "y": 4832.84375,
   "width": 560,
   "height": 47,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_links": {
   "x": 20,
-  "y": 5010.375,
+  "y": 5029.375,
   "width": 560,
   "height": 245,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  },
  "s_done": {
   "x": 20,
-  "y": 5265.375,
+  "y": 5284.375,
   "width": 560,
   "height": 49,
   "sheetW": 600,
-  "sheetH": 5334.375
+  "sheetH": 5353.375
  }
 }

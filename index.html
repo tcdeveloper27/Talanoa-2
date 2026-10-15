@@ -307,6 +307,8 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
   /* ---------- Recent sentences with the big words (Settings, off unless chosen) ---------- */
   #showRecent{flex:none;display:none;gap:8px;padding:0 10px;overflow-x:auto;}
   #showRecent.on{display:flex;}
+  #showWhole{flex:none;margin:8px 10px 0;padding:12px 10px;border:3px solid #0057FF;border-radius:16px;background:#fff;color:#0057FF;
+             font-size:19px;font-weight:900;cursor:pointer;}
   #showRecent button{flex:0 0 auto;max-width:70%;border:2px solid #0057FF;background:#fff;color:#0057FF;border-radius:14px;
                      padding:8px 12px;font-size:17px;font-weight:800;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* ---------- Settings: find a word ---------- */
@@ -574,7 +576,7 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
     <label class="choice"><input type="checkbox" id="strongOn"><span><strong>Darker page names</strong> <small>Darkens the lighter colours a little (I want, Food, Fun, Mom &amp; Dad, Yes) so the white writing is easier to read.</small></span></label>
 
     <h3>Talking in sentences</h3>
-    <label class="choice"><input type="checkbox" id="sentOn"><span><strong>Build sentences</strong> <small>Each picture is still said straight away, and its words also line up at the top. 🔊 says them all, one after another; ✕ starts again. The next picture after 🔊 starts a new sentence, and so does a 2-minute pause.</small></span></label>
+    <label class="choice"><input type="checkbox" id="sentOn"><span><strong>Build sentences</strong> <small>Each picture is still said straight away, and its words also line up at the top. 🔊 says them all, one after another; ✕ starts again. The next picture after 🔊 starts a new sentence, and so does a 2-minute pause. Tapped, the words at the top show just the last words big, with a button for the whole sentence.</small></span></label>
     <label class="choice"><input type="checkbox" id="suggestOn"><span><strong>Word suggestions on the ABC page</strong> <small>Three words to pick from above the letters, from what's been typed so far (words he has spoken before come first; they're remembered while Count taps on this phone is on).</small></span></label>
     <label class="choice"><input type="checkbox" id="numbersOn"><span><strong>Numbers on the ABC page</strong> <small>A row of numbers (1 to 9, then 0) under the letters. Numbers are said as words (15: "fifteen").</small></span></label>
     <label class="choice"><input type="checkbox" id="recentOn"><span><strong>Recent sentences with the big words</strong> <small>The big words also show the last few things said; tap one to say it again.</small></span></label>
@@ -730,6 +732,7 @@ try { if (localStorage.getItem('tt2_fit') === 'cover') document.querySelector('m
 <div id="showView" role="dialog" aria-label="The words, shown big">
   <div id="showText"><div id="showWords"></div></div>
   <div id="showRecent" aria-label="Said before"></div>
+  <button id="showWhole" hidden></button>
   <div id="showBtns"><button id="showAgain">🔊 Say it again</button><button id="showClose">✕ Close</button></div>
 </div>
 
@@ -2715,15 +2718,25 @@ function buildPageList(){
    for a cashier or someone across the room to read, and for loud
    places where the voice is hard to hear. "Say it again" repeats
    them; Close, Back, or a minute without a tap puts the board back.
-   A tile marked "show": true would open this by itself (none is, at
-   the moment). Settings → Reading can turn the banner tap off.
+   A tile marked "show": true (Please wait, on the Hey page) opens this
+   by itself. Settings → Reading can turn the banner tap off.
+   With Build sentences on, it shows what was just said: the last
+   picture's words, or the whole sentence right after 🔊 has said it.
+   "Show the whole sentence" switches to all of it, and back. (Until
+   2026-10-15 it always showed the whole sentence; Tim: show just the
+   last words by default, switchable to the sentence.)
    ============================================================ */
 var showView = document.getElementById('showView'), showWords = document.getElementById('showWords');
 var showBox = document.getElementById('showText'), showCloseT = null, SHOW_BIG_FOR = 60 * 1000;
-function openShow(text){
+var showWhole = document.getElementById('showWhole');
+var showEntry = null, showSent = null;      /* what Say it again says; the sentence the big words came from, if any */
+function openShow(text, entry, sent){
   settle();
+  showEntry = entry || lastSaid; showSent = sent || null;
   showWords.textContent = text;
   showRecents(text);
+  showWhole.hidden = !showSent;
+  if (showSent) showWhole.textContent = showSent.whole ? 'Show just the last words' : '📝 Show the whole sentence';
   showView.classList.add('open');
   fitShow();
   clearTimeout(showCloseT); showCloseT = setTimeout(closeShow, SHOW_BIG_FOR);
@@ -2736,14 +2749,24 @@ function fitShow(){
   showWords.style.fontSize = size + 'px';
   while (size > 18 && (showWords.offsetHeight > h || showWords.scrollWidth > w + 1)){ size -= 2; showWords.style.fontSize = size + 'px'; }
 }
+/* parts: a copy of the sentence; whole: all of it, or only its last piece (the last thing said) */
+function openSentenceBig(parts, whole){
+  var p = parts[parts.length - 1], e;
+  if (whole){ e = {sentence: parts, text: sentenceText(parts)}; setLast(e); }   /* the whole sentence joins the recent ones */
+  else e = p.typed ? {text: p.text, typed: true} : {id: p.id, text: p.text, item: p.item, shown: p.item && p.item.means ? p.text + ' (' + p.item.means + ')' : p.text};
+  openShow(e.shown || e.text, e, parts.length > 1 ? {parts: parts, whole: whole} : null);
+}
 banner.addEventListener('click', function(e){
   if (!BIG || e.target === gear || said.textContent === HINT) return;
-  if (SENT && sentence.length){ setLast({sentence: sentence.slice(), text: sentenceText()}); openShow(sentenceText()); return; }   /* the whole sentence, even if the banner shows its end */
+  if (SENT && sentence.length){ openSentenceBig(sentence.slice(), sentSaid); return; }   /* what was just said; the switch shows the rest */
   openShow(said.textContent);
+});
+showWhole.addEventListener('click', function(){
+  if (showSent) openSentenceBig(showSent.parts, !showSent.whole);
 });
 document.getElementById('showClose').addEventListener('click', closeShow);
 document.getElementById('showAgain').addEventListener('click', function(){
-  sayEntry(lastSaid);
+  sayEntry(showEntry || lastSaid);
   clearTimeout(showCloseT); showCloseT = setTimeout(closeShow, SHOW_BIG_FOR);
 });
 /* Recent sentences with the big words (Settings, off unless chosen): tap one to show it and say it again. */
@@ -2755,7 +2778,7 @@ function showRecents(text){
   list.forEach(function(r){
     var b = document.createElement('button');
     b.textContent = r.shown || r.text;
-    b.addEventListener('click', function(){ setLast(r); openShow(r.shown || r.text); sayEntry(r); });
+    b.addEventListener('click', function(){ setLast(r); openShow(r.shown || r.text, r); sayEntry(r); });
     showRecentEl.appendChild(b);
   });
 }
